@@ -19,13 +19,13 @@ Bundle 'Lokaltog/vim-easymotion'
 Bundle 'Lokaltog/vim-powerline'
 Bundle 'Raimondi/delimitMate'
 Bundle 'nathanaelkane/vim-indent-guides'
-Bundle 'Rip-Rip/clang_complete'
+Bundle 'docunext/closetag.vim'
+Bundle 'Shougo/neocomplete'
 
 " vim-scripts repos
 Bundle 'tir_black'
 Bundle 'c.vim'
 Bundle 'The-NERD-tree'
-"Bundle 'closetag'
 
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -110,22 +110,24 @@ set t_Co=256
 let g:Powerline_symbols='unicode'
 set encoding=utf8
 
-"clang-complete
-let g:clang_complete_copen=1
-let g:clang_periodic_quickfix=0
-let g:clang_snippets=1
-let g:clang_trailing_placeholder=1
-let g:clang_close_preview=1
-let g:clang_use_library=1
-let g:clang_user_options='-std=c++11'
-let g:clang_complete_macros=1
-let g:clang_complete_patterns=1
-
 "set cross
 "set cursorline
 "set cursorcolumn
 "hi CursorLine cterm=none ctermbg=black ctermfg=none guibg=white guifg=white
 "hi Cursorcolumn cterm=none ctermbg=black ctermfg=none guibg=white guifg=white
+
+"neocomplete
+let g:acp_enableAtStartup = 0 
+let g:neocomplete#enable_at_startup = 1 
+let g:neocomplete#enable_smart_case = 1 
+let g:neocomplete#sources#syntax#min_keyword_length = 3 
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+autocmd FileType css setlocal omnifunc=scccomplete#CompleteCSS
+autocmd Filetype html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd Filetype javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
 
 "set JSP hotkey
 nmap <c-p> o<% %><esc>hhi
