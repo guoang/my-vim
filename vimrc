@@ -132,3 +132,5 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 "set JSP hotkey
 nmap <c-p> o<% %><esc>hhi
 
+"run python script
+nmap \rp :!./%<cr>
