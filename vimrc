@@ -133,4 +133,4 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 nmap <c-p> o<% %><esc>hhi
 
 "run python script
-nmap \rp :!./%<cr>
+nmap \rp :!python2 %<cr>
