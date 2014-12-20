@@ -134,3 +134,6 @@ nmap <c-p> o<% %><esc>hhi
 
 "run python script
 nmap \rp :!python2 %<cr>
+
+"scroloffset
+set scrolloff=7
