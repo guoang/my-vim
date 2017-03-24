@@ -45,7 +45,7 @@ Bundle 'c.vim'
 " 目录
 Bundle 'The-NERD-tree'
 " 语法高亮
-Bundle 'sheerun/vim-polyglot'
+Bundle 'guoang/vim-polyglot'
 
 " 快速打开
 Bundle 'ctrlpvim/ctrlp.vim'
