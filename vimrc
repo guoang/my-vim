@@ -8,7 +8,7 @@ Bundle 'gmarik/vundle'
 
 " airline
 Bundle 'vim-airline/vim-airline'
-Bundle 'vim-airline/vim-airline-themes'
+Bundle 'guoang/vim-airline-themes'
 
 " git
 Bundle 'airblade/vim-gitgutter'
