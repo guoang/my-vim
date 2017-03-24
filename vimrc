@@ -3,7 +3,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
 
 " airline
@@ -12,6 +12,8 @@ Bundle 'vim-airline/vim-airline-themes'
 
 " git
 Bundle 'airblade/vim-gitgutter'
+" svn
+Bundle 'mhinz/vim-signify'
 
 " tagbar
 Bundle 'majutsushi/tagbar'
@@ -19,8 +21,9 @@ Bundle 'majutsushi/tagbar'
 " 括号自动补全
 Bundle 'Raimondi/delimitMate'
 "
+" Web 开发
 "Bundle 'docunext/closetag.vim'
-"
+" 根据cache的自动补全
 "Bundle 'Shougo/neocomplete'
 " YouCompleteMe
 Bundle 'Valloric/YouCompleteMe'
@@ -101,6 +104,7 @@ set whichwrap=b,s,<,[,],h,l,>
 
 " 共享剪贴板
 set clipboard=unnamed
+set pastetoggle=<f7>
 
 " 自动缩进
 set autoindent
@@ -137,6 +141,10 @@ nmap <c-l> :vertical resize +3<cr>
 "scroloffset
 set scrolloff=7
 
+" go tabs
+nnoremap gn :bn<CR>
+nnoremap gp :bp<CR>
+
 " 不要自动切换目录
 set noautochdir
 
@@ -166,18 +174,11 @@ let NERDTreeIgnore=['\.pyc', '\.pyo', '\~$', '\.swp']
 
 " airline
 set laststatus=2
-let g:airline_theme = "cool"
+let g:airline_theme = "jellybeans"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#hunks#enabled = 1
-nnoremap <C-PageDown> :bn<CR>
-nnoremap <C-PageUp> :bp<CR>
-
-function! AirlineInit()
-        let g:airline_section_z = airline#section#create_right(['%P', '%B', '%l:%c'])
-endfunction
-autocmd VimEnter * call AirlineInit()
 
 if has("win32")
     set guifont=Ubuntu\ Mono\ for\ Powerline:h12
@@ -232,9 +233,9 @@ nnoremap <leader>lc :lclose<CR>	                    "close locationlist
 inoremap <leader><leader> <C-x><C-o>
 
 let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-" 显示开启vim时检查ycm_extra_conf文件的信息  
+" 显示开启vim时检查ycm_extra_conf文件的信息
 let g:ycm_confirm_extra_conf=1
-" 开启基于tag的补全，可以在这之后添加需要的标签路径  
+" 开启基于tag的补全，可以在这之后添加需要的标签路径
 let g:ycm_collect_identifiers_from_tags_files=1
 "注释和字符串中的文字也会被收入补全
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
@@ -243,7 +244,7 @@ let g:ycm_min_num_of_chars_for_completion=2
 " 禁止缓存匹配项,每次都重新生成匹配项
 let g:ycm_cache_omnifunc=0
 " 开启语义补全
-let g:ycm_seed_identifiers_with_syntax=1	
+let g:ycm_seed_identifiers_with_syntax=1
 "在注释输入中也能补全
 let g:ycm_complete_in_comments = 1
 "在字符串输入中也能补全
@@ -269,11 +270,11 @@ let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
 let g:ycm_key_list_select_completion=['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion=['<C-p>', '<Up>']
 let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"                                           
+let g:UltiSnipsJumpForwardTrigger="<Tab>"
 let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 " end
 " UltiSnips completion function that tries to expand a snippet. If there's no
-" snippet for expanding, if there's no :nippet it just returns TAB key 
+" snippet for expanding, if there's no :nippet it just returns TAB key
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
     if g:ulti_expand_res == 0
@@ -323,7 +324,11 @@ let g:pymode_lint_error_symbol = '>>'
 let g:pymode_lint_options_mccabe = { 'complexity': 10 }
 
 " 使用conque和ipython来实现交互式运行
-autocmd BufRead,BufNewFile *.py nmap ;r :execute 'ConqueTermSplit ipython.exe '.expand('%:p')<CR>
+if has("win32")
+    autocmd BufRead,BufNewFile *.py nmap ;r :execute 'ConqueTermSplit ipython.exe '.expand('%:p')<CR>
+else
+    autocmd BufRead,BufNewFile *.py nmap ;r :execute 'ConqueTermSplit python '.expand('%:p')<CR>
+endif
 
 " 设置折叠模式
 set foldmethod=marker
@@ -342,17 +347,17 @@ au BufRead,BufNewFile *gl.ps set filetype=glsl
 
 " ctrlp
 let g:ctrlp_regexp=0
-let g:ctrlp_tabpage_position = 'ac' 
-let g:ctrlp_working_path_mode = 'rw' 
-let g:ctrlp_custom_ignore = { 
-\ 'dir':  '\v[\/]\.(git|hg|svn)$', 
-\ 'file': '\v\.(exe|so|dll|pyo|pyc)$', 
-\ 'link': 'SOME_BAD_SYMBOLIC_LINKS', 
-\ } 
+let g:ctrlp_tabpage_position = 'ac'
+let g:ctrlp_working_path_mode = 'rw'
+let g:ctrlp_custom_ignore = {
+\ 'dir':  '\v[\/]\.(git|hg|svn)$',
+\ 'file': '\v\.(exe|so|dll|pyo|pyc)$',
+\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+\ }
 
 " ctrlsf
 let g:ctrlsf_ackprg='ag'
-noremap <c-e> :CtrlSF 
+noremap <c-e> :CtrlSF
 let g:ctrlsf_mapping = {
     \ "split": "",
     \ "vsplit": "<c-o>",
@@ -379,3 +384,7 @@ let g:indentLine_color_term = 66
 
 " tabular
 nmap <leader>t :Tabularize /
+
+" conque
+" no warning
+let g:ConqueTerm_StartMessages = 0
