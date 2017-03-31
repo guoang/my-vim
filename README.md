@@ -5,29 +5,29 @@
 
 包含的主要插件：
 
-* C++ && python开发
- * python-mode
- * conque
- * YouCompleteMe
- * tagbar
- * ultisnips
- * vim-snippets
-* 外观
- * vim-airline
- * vim-airline-themes
- * molokai
- * vim-colors-solarized
- * wombat
- * tir_black
- * indentLine
-* 其他
- * ctrlp.vim
- * ctrlsf.vim
- * tabular
- * nerdcommenter
- * delimitMate
- * vim-gitgutter
- * vim-polyglot
+1. C++ && python开发
+  1. python-mode
+  2. conque
+  3. YouCompleteMe
+  4. tagbar
+  5. ultisnips
+  6. vim-snippets
+2. 外观
+  1. vim-airline
+  2. vim-airline-themes
+  3. molokai
+  4. vim-colors-solarized
+  5. wombat
+  6. tir_black
+  7. indentLine
+3. 其他
+  1. ctrlp.vim
+  2. ctrlsf.vim
+  3. tabular
+  4. nerdcommenter
+  5. delimitMate
+  6. vim-gitgutter
+  7. vim-polyglot
 
 
 ## 安装
