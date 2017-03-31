@@ -59,6 +59,9 @@ Bundle 'SirVer/ultisnips'
 Bundle 'honza/vim-snippets'
 " 对齐线
 Bundle 'Yggdroot/indentLine'
+" markdown
+Bundle 'plasticboy/vim-markdown'
+Bundle 'suan/vim-instant-markdown'
 
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -387,3 +390,21 @@ nmap <leader>t :Tabularize /
 " conque
 " no warning
 let g:ConqueTerm_StartMessages = 0
+
+" Vim-markdown ------------------------------
+" Disabled automatically folding
+let g:vim_markdown_folding_disabled=1
+" LeTeX math
+let g:vim_markdown_math=1
+" Highlight YAML frontmatter
+let g:vim_markdown_frontmatter=1
+
+" Vim-instant-markdown -----------------
+" If it takes your system too much, you can specify
+" let g:instant_markdown_slow = 1
+" if you don't want to manually control it
+" you can open this setting
+" and when you open this, you can manually trigger preview
+" via the command :InstantMarkdownPreview
+let g:instant_markdown_autostart = 0
+set shell=bash\ -i
