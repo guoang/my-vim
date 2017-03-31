@@ -20,11 +20,10 @@ Bundle 'majutsushi/tagbar'
 
 " 括号自动补全
 Bundle 'Raimondi/delimitMate'
-"
-" Web 开发
+
+" close tag
 "Bundle 'docunext/closetag.vim'
-" 根据cache的自动补全
-"Bundle 'Shougo/neocomplete'
+
 " YouCompleteMe
 Bundle 'Valloric/YouCompleteMe'
 
@@ -357,7 +356,7 @@ let g:ctrlp_custom_ignore = {
 
 " ctrlsf
 let g:ctrlsf_ackprg='ag'
-noremap <c-e> :CtrlSF
+noremap <c-e> :CtrlSF 
 let g:ctrlsf_mapping = {
     \ "split": "",
     \ "vsplit": "<c-o>",
