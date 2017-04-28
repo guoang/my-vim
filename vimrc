@@ -13,7 +13,7 @@ Bundle 'guoang/vim-airline-themes'
 " git
 Bundle 'airblade/vim-gitgutter'
 " svn
-Bundle 'mhinz/vim-signify'
+" Bundle 'mhinz/vim-signify'
 
 " tagbar
 Bundle 'majutsushi/tagbar'
@@ -62,6 +62,11 @@ Bundle 'Yggdroot/indentLine'
 " markdown
 Bundle 'plasticboy/vim-markdown'
 Bundle 'suan/vim-instant-markdown'
+
+" lua
+Bundle 'vim-scripts/lua.vim'
+Bundle 'xolox/vim-lua-ftplugin'
+Bundle 'xolox/vim-misc'
 
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -407,4 +412,5 @@ let g:vim_markdown_frontmatter=1
 " and when you open this, you can manually trigger preview
 " via the command :InstantMarkdownPreview
 let g:instant_markdown_autostart = 0
-set shell=bash\ -i
+"set shell=bash\ -i
+nmap <leader>rm :InstantMarkdownPreview<cr>
