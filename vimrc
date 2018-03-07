@@ -1,7 +1,7 @@
 " Python Path
 " {{{
 function! InitPythonPath()
-    let s:python_path = []
+    let s:python_path = ['.']
     let g78_root = '/Volumes/G71/g78/MobaServer/'
     if getcwd() =~ g78_root
         let g78_server = g78_root.'server/'
@@ -16,97 +16,98 @@ endfunction
 call InitPythonPath()
 " }}}
 
-" Vundle settings
+" Plug settings
 " {{{
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-" let Vundle manage Vundle
-" required!
-Bundle 'gmarik/vundle'
+call plug#begin('~/.vim/plugged')
 " airline
-Bundle 'vim-airline/vim-airline'
-Bundle 'guoang/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'guoang/vim-airline-themes'
 " git
-Bundle 'airblade/vim-gitgutter'
+" Plug 'airblade/vim-gitgutter'
 " svn
-" Bundle 'mhinz/vim-signify'
-" tagbar
-" too slow!!
-" Bundle 'majutsushi/tagbar'
+" Plug 'mhinz/vim-signify'
+" tagbar, too slow!!
+" Plug 'majutsushi/tagbar'
 " 括号自动补全
-Bundle 'Raimondi/delimitMate'
+Plug 'Raimondi/delimitMate'
 " close tag
-" Bundle 'docunext/closetag.vim'
+" Plug 'docunext/closetag.vim'
 " YouCompleteMe
-Bundle 'Valloric/YouCompleteMe'
-" 配色
-Bundle 'tomasr/molokai'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'vim-scripts/wombat'
-Bundle 'tir_black'
+Plug 'Valloric/YouCompleteMe', {'do': './install.py'}
+" color
+Plug 'tomasr/molokai'
+"Plug 'altercation/vim-colors-solarized'
+"Plug 'vim-scripts/wombat'
+"Plug 'tir_black'
 " python
-Bundle 'klen/python-mode'
+Plug 'guoang/python-mode', {'for': ['python'], 'branch': 'master'}
 " sort import, better than isort
-Bundle 'guoang/impsort.vim'
+Plug 'guoang/impsort.vim', {'for': ['python']}
 " 交互式运行python
-Bundle 'nicoraffo/conque'
+Plug 'nicoraffo/conque', {'for': ['python']}
 " C
-Bundle 'c.vim'
+Plug 'vim-scripts/c.vim', {'for': ['c', 'cpp']}
 " 目录
-Bundle 'The-NERD-tree'
-" 语法高亮
-Bundle 'guoang/vim-polyglot'
-" 快速打开
-Bundle 'ctrlpvim/ctrlp.vim'
-" 搜索
-Bundle 'dyng/ctrlsf.vim'
-" 代码对齐
-Bundle 'godlygeek/tabular'
+Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
+nmap <F3> :NERDTreeToggle<cr>
 " 快速注释
-Bundle 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'
+" 语法高亮
+Plug 'guoang/vim-polyglot', {'for': []}
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') != 'markdown' && expand('<amatch>') != 'python' | call plug#load('vim-polyglot') | execute 'autocmd! plug_xtype' | endif
+augroup END
+" 快速打开
+Plug 'ctrlpvim/ctrlp.vim', {'on': 'CtrlP'}
+nmap <c-p> :CtrlP<cr>
+" 搜索
+Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
+nmap <c-e> <Plug>CtrlSFPrompt
+vmap <c-e> <Plug>CtrlSFVwordExec
+" 代码对齐
+Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " 快速补全片段
-Bundle 'SirVer/ultisnips'
-Bundle 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 " 对齐线
-" Bundle 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 " markdown
-Bundle 'plasticboy/vim-markdown'
-Bundle 'suan/vim-instant-markdown'
+Plug 'plasticboy/vim-markdown', {'for': []}
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown') | execute 'autocmd! plug_xtype' | endif
+augroup END
+" markdown preview
+"Plug 'suan/vim-instant-markdown' -- good but too old, no mermaid support
+"Plug 'kannokanno/previm' -- with mermaid but not good enough
+" I use markdown-mate now, it's fantastic
+" https://tylingsoft.com/markdown-mate/
+" https://mdp.tylingsoft.com/
+" auto gen toc
+Plug 'mzlogin/vim-markdown-toc', {'for': []}
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown-toc') | execute 'autocmd! plug_xtype' | endif
+augroup END
+
 " lua
-Bundle 'vim-scripts/lua.vim'
-Bundle 'xolox/vim-lua-ftplugin'
-Bundle 'xolox/vim-misc'
+Plug 'vim-scripts/lua.vim', {'for': ['lua']}
+Plug 'xolox/vim-lua-ftplugin', {'for': ['lua']}
+Plug 'xolox/vim-misc', {'for': ['lua']}
 " motion
-Bundle 'easymotion/vim-easymotion'
+Plug 'easymotion/vim-easymotion'
 " undo
-Bundle 'sjl/gundo.vim'
-"
-" Brief help
-" :BundleList          - list configured bundles
-" :BundleInstall(!)    - install (update) bundles
-" :BundleSearch(!) foo - search (or refresh cache first) for foo
-" :BundleClean(!)      - confirm (or auto-approve) removal of unused bundles
-"
-" see :h vundle for more details or wiki for FAQ
-" NOTE: comments after Bundle commands are not allowed.
+Plug 'sjl/gundo.vim'
+" input method manage
+Plug 'ybian/smartim'
+call plug#end()
 " }}}
 
 " Builtin Settings
 " {{{
-filetype on
-filetype plugin on
-filetype indent on
-filetype plugin indent on
-" 不兼容VI
 set nocompatible
 " 搜索时高亮目标文本
 set hls
 " 搜索时对大小写不敏感
 set ignorecase smartcase
-" 语法高亮
-syntax enable
-syntax on
 " 光标自由移动
 set whichwrap=b,s,<,[,],h,l,>
 " 共享剪贴板
@@ -160,8 +161,8 @@ set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-brm,utf-8,chinese,cp936
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
+"source $VIMRUNTIME/delmenu.vim
+"source $VIMRUNTIME/menu.vim
 language message zh_CN.utf-8
 " backspace
 set backspace=indent,eol,start
@@ -185,12 +186,8 @@ if has("win32")
 endif
 " spzs
 au BufRead,BufNewFile *.spzs set filetype=spzs
-au BufRead,BufNewFile *.fx set filetype=hlsl
-au BufRead,BufNewFile *.nfx set filetype=hlsl
-au BufRead,BufNewFile *.tml set filetype=hlsl
-au BufRead,BufNewFile *.fxl set filetype=hlsl
-au BufRead,BufNewFile *gl.vs set filetype=glsl
-au BufRead,BufNewFile *gl.ps set filetype=glsl
+au BufRead,BufNewFile *.{fx,nfx,tml,fxl} set filetype=hlsl
+au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
 " 环境变量python path, ycm等插件会用到
 let $PYTHONPATH = join(s:python_path, ':')
 " 缺省的，vim会使用下拉菜单和一个preview窗口来显示匹配项目，
@@ -200,11 +197,12 @@ let $PYTHONPATH = join(s:python_path, ':')
 set completeopt=longest,menu
 " reload config
 nmap <leader><leader>r :source ~/.vimrc<cr>:YcmRestartServer<cr>
+" set shell
+set shell=/usr/local/bin/zsh
 " }}}
 
 " nerdTree
 " {{{
-nmap <F3> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.pyc', '\.pyo', '\~$', '\.swp']
 " }}}
 
@@ -218,9 +216,9 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#hunks#enabled = 1
 
 if has("win32")
-    set guifont=Ubuntu\ Mono\ for\ Powerline:h12
-    let g:Powerline_symbols="fancy"
-    let g:airline_symbols = {}
+set guifont=Ubuntu\ Mono\ for\ Powerline:h12
+let g:Powerline_symbols="fancy"
+let g:airline_symbols = {}
 endif
 " }}}
 
@@ -234,13 +232,13 @@ endif
 " {{{
 " 跳转
 function! SmartGoTo()
-    let old_file = expand('%:p')
-    let old_pos = getpos('.')
-    exec "YcmCompleter GoTo"
-    if old_file == expand('%:p') && old_pos == getpos('.') && tagfiles() != []
-        let ident = expand('<cword>')
-        exec 'tjump '.ident
-    endif
+let old_file = expand('%:p')
+let old_pos = getpos('.')
+exec "YcmCompleter GoTo"
+if old_file == expand('%:p') && old_pos == getpos('.') && tagfiles() != []
+    let ident = expand('<cword>')
+    exec 'tjump '.ident
+endif
 endfunction
 nnoremap <c-g>g :call SmartGoTo()<CR>
 nnoremap <c-g>d :YcmCompleter GoToDefinition<CR>
@@ -248,7 +246,7 @@ nnoremap <c-g>f :YcmCompleter FixIt<CR>
 nnoremap <c-g><c-g> :call SmartGoTo()<CR>
 nnoremap <c-g><c-d> :YcmCompleter GoToDefinition<CR>
 nnoremap <c-g><c-f> :YcmCompleter FixIt<CR>
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 " 关闭vim时检查ycm_extra_conf文件的信息
 let g:ycm_confirm_extra_conf = 0
 " collect identifiers
@@ -263,12 +261,14 @@ let g:ycm_complete_in_comments = 1
 let g:ycm_complete_in_strings = 1
 " black_list
 let g:ycm_filetype_blacklist = {
-      \ 'tagbar' : 1,
-      \ 'nerdtree' : 1,
-      \ 'ctrlsf': 1,
-      \ 'ctrlp': 1,
-      \ 'help': 1,
-      \}
+  \ 'tagbar' : 1,
+  \ 'nerdtree' : 1,
+  \ 'ctrlsf': 1,
+  \ 'ctrlp': 1,
+  \ 'help': 1,
+  \ 'md': 1,
+  \ 'markdown': 1,
+  \}
 " use c-n/c-p, default tab/s-tab
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
@@ -280,7 +280,7 @@ let g:ycm_log_level = 'debug'
 " ultisnips + vim-snippets
 " {{{
 "定义存放代码片段的文件夹，使用自定义和默认的，将会的到全局，有冲突的会提示
-let g:UltiSnipsSnippetDirectories=["bundle/vim-snippets/UltiSnips"]
+let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
 
 " 参考https://github.com/Valloric/YouCompleteMe/issues/36#issuecomment-62941322
 " 解决ultisnips和ycm tab冲突，如果不使用下面的办法解决可以参考
@@ -294,14 +294,14 @@ let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
 " UltiSnips completion function that tries to expand a snippet. If there's no
 " snippet for expanding, if there's no :nippet it just returns TAB key
 function! g:UltiSnips_Complete()
-    call UltiSnips#ExpandSnippet()
-    if g:ulti_expand_res == 0
-        call UltiSnips#JumpForwards()
-        if g:ulti_jump_forwards_res == 0
-            return "\<TAB>"
-        endif
+call UltiSnips#ExpandSnippet()
+if g:ulti_expand_res == 0
+    call UltiSnips#JumpForwards()
+    if g:ulti_jump_forwards_res == 0
+        return "\<TAB>"
     endif
-    return ""
+endif
+return ""
 endfunction
 
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
@@ -317,10 +317,11 @@ let g:pymode_folding = 0
 let g:pymode_rope = 0
 " close doc view
 let g:pymode_doc = 0
+let g:pymode_lint = 1
 " check on write
 let g:pymode_lint_unmodified = 1
 " default code checkers
-let g:pymode_lint_checkers = ['pylint', 'pyflakes', 'pep8', 'mccabe']
+let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
 " error message if cursor placed at the error line
 let g:pymode_lint_message = 1
 " 关闭自动弹出的错误信息窗口
@@ -328,7 +329,7 @@ let g:pymode_lint_cwindow = 0
 " ignore
 let g:pymode_lint_ignore = ['E221', 'E203', 'E501', 'C901', 'E272', 'E129', 'W0404', 'E722']
 " ignore some builtins
-let g:pymode_lint_options_pyflakes = { 'builtins': 'logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr' }
+let g:pymode_lint_options_pyflakes = { 'builtins': 'gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog' }
 " customize motion
 au FileType python nmap yim yiM | nmap yic yiC
 au FileType python nmap dim diM | nmap dic diC
@@ -357,8 +358,6 @@ let g:ctrlp_custom_ignore = {
 " {{{
 let g:ctrlsf_ackprg='ag'
 let g:ctrlsf_default_root = 'project'
-nmap <c-e> <Plug>CtrlSFPrompt
-vmap <c-e> <Plug>CtrlSFVwordExec
 let g:ctrlsf_mapping = {
     \ "split": "",
     \ "vsplit": "<c-o>",
@@ -472,24 +471,27 @@ let g:ConqueTerm_StartMessages = 0
 " Vim-markdown
 " {{{
 " Disabled automatically folding
-let g:vim_markdown_folding_disabled=1
+let g:vim_markdown_folding_disabled = 1
+" no conceal
+let g:vim_markdown_conceal = 0
 " LeTeX math
-let g:vim_markdown_math=1
+let g:vim_markdown_math = 1
 " Highlight YAML frontmatter
-let g:vim_markdown_frontmatter=1
+let g:vim_markdown_frontmatter = 1
+" highlight json
+let g:vim_markdown_json_frontmatter = 1
+" no key maps
+let g:vim_markdown_no_default_key_mappings = 1
+" toc window auto fit
+let g:vim_markdown_toc_autofit = 1
+" no list indent
+let g:vim_markdown_new_list_item_indent = 0
+
 " }}}
 
-" Vim-instant-markdown
+" markdown-mate
 " {{{
-" If it takes your system too much, you can specify
-" let g:instant_markdown_slow = 1
-" if you don't want to manually control it
-" you can open this setting
-" and when you open this, you can manually trigger preview
-" via the command :InstantMarkdownPreview
-let g:instant_markdown_autostart = 0
-"set shell=bash\ -i
-nmap <leader>rm :InstantMarkdownPreview<cr>
+autocmd filetype markdown call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
 " }}}
 
 " gundo
@@ -507,4 +509,29 @@ highlight pythonImportedObject ctermfg=152 guifg=#afd7d7
 "highlight pythonImportedObject ctermfg=109 guifg=#87afaf
 "highlight pythonImportedObject ctermfg=110 guifg=#87afd7
 "highlight pythonImportedObject ctermfg=116 guifg=#87d7d7
+" }}}
+
+" smartim "
+" {{{
+let g:smartim_default = 'com.apple.keylayout.ABC'
+" Function keys that start with an <Esc> are recognized in Insert
+" mode.  When this option is off, the cursor and function keys cannot be
+" used in Insert mode if they start with an <Esc>.  The advantage of
+" this is that the single <Esc> is recognized immediately, instead of
+" after one second. 
+set noek
+" by default, timeoutlen is 1000 and ttimeoutlen is -1,
+" that means vim wait 1000ms for a mapped key or key code sequence.
+" It cause input method switches after a delay.
+" set ttimeoutlen=0 tells vim don't wait for key code sequence,
+" so that vim exit insert mode immediately after [ESC] pressed.
+" see :h ttimeoutlen
+" set timeoutlen=1000 ttimeoutlen=0
+" }}}
+
+" polyglot
+" {{{
+" markdown交由vim-markdown
+" python交由pymode
+let g:polyglot_disabled = ['markdown', 'python']
 " }}}
