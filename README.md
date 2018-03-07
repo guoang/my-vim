@@ -8,12 +8,12 @@
     mv .vimrc .vimrc.bak
     mv .vim .vim.bak
     # get new
-    git clone git@github.com:guoang/my-vim.git ~/.vim
+    git clone https://github.com/guoang/my-vim.git ~/.vim
     ln -s ~/.vim/vimrc ~/.vimrc
 
 ### 2. Edit vimrc
 
-You may need to customize YouComplete install command:
+You may need to customize YouCompleteMe installation command:
 
     Plug 'Valloric/YouCompleteMe', {'do': './install.py'}
 
