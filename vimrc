@@ -198,7 +198,7 @@ set completeopt=longest,menu
 " reload config
 nmap <leader><leader>r :source ~/.vimrc<cr>:YcmRestartServer<cr>
 " set shell
-set shell=/usr/local/bin/zsh
+"set shell=/usr/local/bin/zsh
 " }}}
 
 " nerdTree
