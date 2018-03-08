@@ -329,7 +329,7 @@ let g:pymode_lint_cwindow = 0
 " ignore
 let g:pymode_lint_ignore = ['E221', 'E203', 'E501', 'C901', 'E272', 'E129', 'W0404', 'E722']
 " ignore some builtins
-let g:pymode_lint_options_pyflakes = { 'builtins': 'gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog' }
+let g:pymode_lint_options_pyflakes = { 'builtins': 'logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog' }
 " customize motion
 au FileType python nmap yim yiM | nmap yic yiC
 au FileType python nmap dim diM | nmap dic diC
