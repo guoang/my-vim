@@ -58,7 +58,7 @@ augroup plug_xtype
     autocmd FileType * if expand('<amatch>') != 'markdown' && expand('<amatch>') != 'python' | call plug#load('vim-polyglot') | execute 'autocmd! plug_xtype' | endif
 augroup END
 " 快速打开
-Plug 'ctrlpvim/ctrlp.vim', {'on': 'CtrlP'}
+Plug 'guoang/ctrlp.vim', {'on': 'CtrlP'}
 nmap <c-p> :CtrlP<cr>
 " 搜索
 Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
@@ -67,8 +67,8 @@ vmap <c-e> <Plug>CtrlSFVwordExec
 " 代码对齐
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " 快速补全片段
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+"Plug 'SirVer/ultisnips'
+"Plug 'honza/vim-snippets'
 " 对齐线
 " Plug 'Yggdroot/indentLine'
 " markdown
@@ -280,31 +280,31 @@ let g:ycm_log_level = 'debug'
 " ultisnips + vim-snippets
 " {{{
 "定义存放代码片段的文件夹，使用自定义和默认的，将会的到全局，有冲突的会提示
-let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
+"let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
 
 " 参考https://github.com/Valloric/YouCompleteMe/issues/36#issuecomment-62941322
 " 解决ultisnips和ycm tab冲突，如果不使用下面的办法解决可以参考
 " https://github.com/Valloric/YouCompleteMe/issues/36#issuecomment-63205056的配置
 " begin
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-" end
-
-" UltiSnips completion function that tries to expand a snippet. If there's no
-" snippet for expanding, if there's no :nippet it just returns TAB key
-function! g:UltiSnips_Complete()
-call UltiSnips#ExpandSnippet()
-if g:ulti_expand_res == 0
-    call UltiSnips#JumpForwards()
-    if g:ulti_jump_forwards_res == 0
-        return "\<TAB>"
-    endif
-endif
-return ""
-endfunction
-
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+"let g:UltiSnipsExpandTrigger="<Tab>"
+"let g:UltiSnipsJumpForwardTrigger="<Tab>"
+"let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+"" end
+"
+"" UltiSnips completion function that tries to expand a snippet. If there's no
+"" snippet for expanding, if there's no :nippet it just returns TAB key
+"function! g:UltiSnips_Complete()
+"call UltiSnips#ExpandSnippet()
+"if g:ulti_expand_res == 0
+"    call UltiSnips#JumpForwards()
+"    if g:ulti_jump_forwards_res == 0
+"        return "\<TAB>"
+"    endif
+"endif
+"return ""
+"endfunction
+"
+""au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 " }}}
 
 " python mode
@@ -319,7 +319,7 @@ let g:pymode_rope = 0
 let g:pymode_doc = 0
 let g:pymode_lint = 1
 " check on write
-let g:pymode_lint_unmodified = 1
+let g:pymode_lint_on_write = 0
 " default code checkers
 let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
 " error message if cursor placed at the error line
@@ -337,7 +337,7 @@ au FileType python nmap vim viM | nmap vic viC
 au FileType python nmap yam yaM | nmap yac yaC
 au FileType python nmap dam daM | nmap dac daC
 au FileType python nmap vam vaM | nmap vac vaC
-au FileType python nmap <f2> :PymodeLintAuto<cr>
+au FileType python nmap <f2> :PymodeLint<cr>
 " }}}
 
 " ctrlp
@@ -352,6 +352,7 @@ let g:ctrlp_custom_ignore = {
 \ 'file': '\v\.(exe|so|dll|pyo|pyc)$',
 \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
 \ }
+let g:ctrlp_lazy_del = 1
 " }}}
 
 " ctrlsf
@@ -519,14 +520,15 @@ let g:smartim_default = 'com.apple.keylayout.ABC'
 " used in Insert mode if they start with an <Esc>.  The advantage of
 " this is that the single <Esc> is recognized immediately, instead of
 " after one second. 
-set noek
+" NOTE: set noek conflict with nocompatible!
+" set noek
 " by default, timeoutlen is 1000 and ttimeoutlen is -1,
 " that means vim wait 1000ms for a mapped key or key code sequence.
 " It cause input method switches after a delay.
 " set ttimeoutlen=0 tells vim don't wait for key code sequence,
 " so that vim exit insert mode immediately after [ESC] pressed.
 " see :h ttimeoutlen
-" set timeoutlen=1000 ttimeoutlen=0
+set timeoutlen=1000 ttimeoutlen=0
 " }}}
 
 " polyglot
