@@ -29,7 +29,7 @@ Plug 'guoang/vim-airline-themes'
 " tagbar, too slow!!
 " Plug 'majutsushi/tagbar'
 " 括号自动补全
-Plug 'Raimondi/delimitMate'
+Plug 'guoang/delimitMate'
 " close tag
 " Plug 'docunext/closetag.vim'
 " YouCompleteMe
@@ -329,7 +329,7 @@ let g:pymode_lint_cwindow = 0
 " ignore
 let g:pymode_lint_ignore = ['E221', 'E203', 'E501', 'C901', 'E272', 'E129', 'W0404', 'E722']
 " ignore some builtins
-let g:pymode_lint_options_pyflakes = { 'builtins': 'logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog' }
+let g:pymode_lint_options_pyflakes = { 'builtins': 'logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem' }
 " customize motion
 au FileType python nmap yim yiM | nmap yic yiC
 au FileType python nmap dim diM | nmap dic diC
@@ -536,4 +536,11 @@ set timeoutlen=1000 ttimeoutlen=0
 " markdown交由vim-markdown
 " python交由pymode
 let g:polyglot_disabled = ['markdown', 'python']
+" }}}
+
+" delimitMate
+" {{{
+" <bs> 的绑定会被YCM覆盖, 这里需要手动设置一下
+imap <bs> <Plug>delimitMateBS
+let b:delimitMate_balance_matchpairs = 1
 " }}}
