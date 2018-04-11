@@ -199,6 +199,19 @@ set completeopt=longest,menu
 nmap <leader><leader>r :source ~/.vimrc<cr>:YcmRestartServer<cr>
 " set shell
 "set shell=/usr/local/bin/zsh
+" jumplist
+autocmd VimEnter * clearjumps
+nnoremap % :execute 'keepjumps norm! ' . v:count1 . '%'<cr>
+nnoremap G :execute 'keepjumps norm! ' . v:count1 . 'G'<cr>
+nnoremap M :execute 'keepjumps norm! ' . v:count1 . 'M'<cr>
+nnoremap n :execute 'keepjumps norm! ' . v:count1 . 'n'<cr>
+nnoremap N :execute 'keepjumps norm! ' . v:count1 . 'N'<cr>
+nnoremap ( :execute 'keepjumps norm! ' . v:count1 . '('<cr>
+nnoremap ) :execute 'keepjumps norm! ' . v:count1 . ')'<cr>
+nnoremap { :execute 'keepjumps norm! ' . v:count1 . '{'<cr>
+nnoremap } :execute 'keepjumps norm! ' . v:count1 . '}'<cr>
+nnoremap [[ :execute 'keepjumps norm! ' . v:count1 . '[['<cr>
+nnoremap ]] :execute 'keepjumps norm! ' . v:count1 . ']]'<cr>
 " }}}
 
 " nerdTree
