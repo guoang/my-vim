@@ -27,31 +27,31 @@ Plug 'guoang/vim-airline-themes'
 " svn
 " Plug 'mhinz/vim-signify'
 " tagbar, too slow!!
-" Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar', {'for': ['c', 'cpp']}
 " 括号自动补全
 Plug 'guoang/delimitMate'
 " close tag
 " Plug 'docunext/closetag.vim'
 " YouCompleteMe
 Plug 'Valloric/YouCompleteMe', {'do': './install.py'}
+" syntastic - no compatible with ycm
+" Plug 'vim-syntastic/syntastic', {'for': ['c', 'cpp']}
 " color
 Plug 'tomasr/molokai'
-"Plug 'altercation/vim-colors-solarized'
-"Plug 'vim-scripts/wombat'
-"Plug 'tir_black'
+" Plug 'altercation/vim-colors-solarized'
+" Plug 'vim-scripts/wombat'
+" Plug 'tir_black'
 " python
 Plug 'guoang/python-mode', {'for': ['python'], 'branch': 'master'}
 " sort import, better than isort
 Plug 'guoang/impsort.vim', {'for': ['python']}
 " 交互式运行python
 Plug 'nicoraffo/conque', {'for': ['python']}
-" C
-Plug 'vim-scripts/c.vim', {'for': ['c', 'cpp']}
 " 目录
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 nmap <F3> :NERDTreeToggle<cr>
 " 快速注释
-Plug 'scrooloose/nerdcommenter'
+Plug 'guoang/nerdcommenter'
 " 语法高亮
 Plug 'guoang/vim-polyglot', {'for': []}
 augroup plug_xtype
@@ -67,8 +67,8 @@ vmap <c-e> <Plug>CtrlSFVwordExec
 " 代码对齐
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " 快速补全片段
-"Plug 'SirVer/ultisnips'
-"Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
 " 对齐线
 " Plug 'Yggdroot/indentLine'
 " markdown
@@ -77,8 +77,8 @@ augroup plug_xtype
     autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown') | execute 'autocmd! plug_xtype' | endif
 augroup END
 " markdown preview
-"Plug 'suan/vim-instant-markdown' -- good but too old, no mermaid support
-"Plug 'kannokanno/previm' -- with mermaid but not good enough
+" Plug 'suan/vim-instant-markdown' -- good but too old, no mermaid support
+" Plug 'kannokanno/previm' -- with mermaid but not good enough
 " I use markdown-mate now, it's fantastic
 " https://tylingsoft.com/markdown-mate/
 " https://mdp.tylingsoft.com/
@@ -98,6 +98,11 @@ Plug 'easymotion/vim-easymotion'
 Plug 'sjl/gundo.vim'
 " input method manage
 Plug 'ybian/smartim'
+" clang format
+Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
+" display number of search matches & index of a current match
+Plug 'google/vim-searchindex'
+
 call plug#end()
 " }}}
 
@@ -122,7 +127,7 @@ set sw=4
 " 行号
 set nu
 " 配色
-"let g:rehash256 = 1
+" let g:rehash256 = 1
 colo molokai
 " tab转空格
 set tabstop=4
@@ -203,8 +208,8 @@ nmap <leader><leader>r :source ~/.vimrc<cr>:YcmRestartServer<cr>
 autocmd VimEnter * clearjumps
 nnoremap G :execute 'keepjumps norm! G'<cr>
 nnoremap % :execute 'keepjumps norm! %'<cr>
-nnoremap n :execute 'keepjumps norm! ' . v:count1 . 'n'<cr>
-nnoremap N :execute 'keepjumps norm! ' . v:count1 . 'N'<cr>
+nnoremap n :execute 'keepjumps norm! ' . v:count1 . 'n'<cr>:SearchIndex<cr>
+nnoremap N :execute 'keepjumps norm! ' . v:count1 . 'N'<cr>:SearchIndex<cr>
 nnoremap ( :execute 'keepjumps norm! ' . v:count1 . '('<cr>
 nnoremap ) :execute 'keepjumps norm! ' . v:count1 . ')'<cr>
 nnoremap { :execute 'keepjumps norm! ' . v:count1 . '{'<cr>
@@ -370,7 +375,7 @@ let g:ctrlp_lazy_del = 1
 " ctrlsf
 " {{{
 let g:ctrlsf_ackprg='ag'
-let g:ctrlsf_default_root = 'project'
+let g:ctrlsf_default_root = 'project+fw'
 let g:ctrlsf_mapping = {
     \ "split": "",
     \ "vsplit": "<c-o>",
@@ -381,19 +386,24 @@ let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags']
 " nerdcomment
 " {{{
 " Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 0
+let g:NERDSpaceDelims = 1
+let g:NERDRemoveExtraSpaces = 1
 " Use compact syntax for prettified multi-line comments
-let g:NERDCompactSexyComs = 1
+let g:NERDCompactSexyComs = 0
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
 " Set a language to use its alternate delimiters by default
-let g:NERDAltDelims_java = 1
+let g:NERDAltDelims_c = 1
+let g:NERDAltDelims_python = 1
 " Add your own custom formats or override the defaults
-let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+let g:NERDCustomDelimiters = {
+            \ 'python': { 'left': '#', 'right': '' },
+            \ }
 " Allow commenting and inverting empty lines (useful when commenting a region)
 let g:NERDCommentEmptyLines = 1
 " Enable trimming of trailing whitespace when uncommenting
 let g:NERDTrimTrailingWhitespace = 1
+
 " }}}
 
 " identline
@@ -524,7 +534,7 @@ highlight pythonImportedObject ctermfg=152 guifg=#afd7d7
 "highlight pythonImportedObject ctermfg=116 guifg=#87d7d7
 " }}}
 
-" smartim "
+" smartim
 " {{{
 let g:smartim_default = 'com.apple.keylayout.ABC'
 " Function keys that start with an <Esc> are recognized in Insert
@@ -555,4 +565,71 @@ let g:polyglot_disabled = ['markdown', 'python']
 " <bs> 的绑定会被YCM覆盖, 这里需要手动设置一下
 imap <bs> <Plug>delimitMateBS
 let b:delimitMate_balance_matchpairs = 1
+" }}}
+
+" c++
+" {{{
+function! RunCpp()
+    if &ft != 'cpp' && &ft != 'c'
+        return
+    endif
+    let filename = expand('%')
+    let prefix = split(filename, '\.')[0]
+    let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
+    exe '!'.compile.';./'.prefix
+    call system('rm '.prefix)
+endfunction
+
+nmap <leader>rr :call RunCpp()<cr>
+
+au FileType c   nmap <f2> :!cpplint %<cr>
+au FileType cpp nmap <f2> :!cpplint %<cr>
+" au FileType c   map  <c-y> :pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
+" au FileType cpp map  <c-y> :pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
+" au FileType c   imap <c-y> <c-o>:pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
+" au FileType cpp imap <c-y> <c-o>:pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
+" au InsertLeave *.cpp,*.cc,*.cxx,*.C,*.c,*.h,*.hpp,*.hxx exe ':pyf /usr/local/opt/llvm/share/clang/clang-format.py'
+" }}}
+
+" clang-format
+" {{{
+let g:clang_format#code_style = 'google'
+let g:clang_format#detect_style_file = 1
+let g:clang_format#auto_format = 1
+let g:clang_format#auto_format_on_insert_leave = 0
+au FileType c,cpp map <c-y> :ClangFormat<CR>
+au FileType c,cpp imap <c-y> <c-o>:ClangFormat<CR>
+" }}}
+
+" syntastic - not compatible with ycm
+" {{{
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+"
+" " only active for c/c++
+" " "mode" can be mapped to one of two values - "active" or "passive".
+" " When set to "active", syntastic does automatic checking whenever a buffer is saved or initially opened.
+" " When set to "passive" syntastic only checks when the user calls :SyntasticCheck.
+" " The exceptions to these rules are defined with "active_filetypes" and "passive_filetypes".
+" " In passive mode, automatic checks are still done for filetypes in the "active_filetypes"
+" " array (and "passive_filetypes" is ignored).
+" " In active mode, automatic checks are not done for any filetypes in the "passive_filetypes"
+" " array ("active_filetypes" is ignored).
+" let g:syntastic_mode_map = {
+"     \ 'mode': 'passive',
+"     \ 'active_filetypes': ['c', 'cpp'],
+"     \ 'passive_filetypes': [] }
+"
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 0
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_aggregate_errors = 1
+"
+" let g:syntastic_cpp_cpplint_exec = 'cpplint'
+" let g:syntastic_cpp_checkers = ['cpplint']
+" " 设置cpplint的错误级别阈值
+" " 默认是5, 级别低于这一设置的不会显示
+" let g:syntastic_cpp_cpplint_thres = 1
 " }}}
