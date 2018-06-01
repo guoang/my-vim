@@ -33,7 +33,7 @@ Plug 'guoang/delimitMate'
 " close tag
 " Plug 'docunext/closetag.vim'
 " YouCompleteMe
-Plug 'Valloric/YouCompleteMe', {'do': './install.py'}
+Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
 " syntastic - no compatible with ycm
 " Plug 'vim-syntastic/syntastic', {'for': ['c', 'cpp']}
 " color
@@ -41,8 +41,8 @@ Plug 'tomasr/molokai'
 " Plug 'altercation/vim-colors-solarized'
 " Plug 'vim-scripts/wombat'
 " Plug 'tir_black'
-" python
-Plug 'guoang/python-mode', {'for': ['python'], 'branch': 'master'}
+" pymode
+Plug 'guoang/python-mode', {'for': ['python'], 'branch': 'develop'}
 " sort import, better than isort
 Plug 'guoang/impsort.vim', {'for': ['python']}
 " 交互式运行python
@@ -171,8 +171,8 @@ set fileencodings=ucs-brm,utf-8,chinese,cp936
 language message zh_CN.utf-8
 " backspace
 set backspace=indent,eol,start
-" highlight line
-set cursorline
+" highlight line, slow down cursor move
+" set cursorline
 " run python script
 if has("win32")
     nmap \rp :!python.exe %<cr>
@@ -201,7 +201,7 @@ let $PYTHONPATH = join(s:python_path, ':')
 " :help completeopt
 set completeopt=longest,menu
 " reload config
-nmap <leader><leader>r :source ~/.vimrc<cr>:YcmRestartServer<cr>
+nmap <leader><leader>r :source ~/.vim/vimrc<cr>:YcmRestartServer<cr>
 " set shell
 "set shell=/usr/local/bin/zsh
 " jumplist
@@ -326,6 +326,7 @@ let g:ycm_log_level = 'debug'
 
 " python mode
 " {{{
+let g:pymode_python = 'python'
 " 取消run code，因为它有很多缺陷如不能与pdb交互，不能终止循环等
 let g:pymode_run = 0
 " cancle pymode folding
