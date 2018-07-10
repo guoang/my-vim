@@ -19,89 +19,62 @@ call InitPythonPath()
 " Plug settings
 " {{{
 call plug#begin('~/.vim/plugged')
-" airline
+" Appearance
 Plug 'vim-airline/vim-airline'
 Plug 'guoang/vim-airline-themes'
-" git
-" Plug 'airblade/vim-gitgutter'
-" svn
-" Plug 'mhinz/vim-signify'
-" tagbar, too slow!!
-" Plug 'majutsushi/tagbar', {'for': ['c', 'cpp']}
-" 括号自动补全
-Plug 'guoang/delimitMate'
-" close tag
-" Plug 'docunext/closetag.vim'
-" YouCompleteMe
-Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
-" syntastic - no compatible with ycm
-" Plug 'vim-syntastic/syntastic', {'for': ['c', 'cpp']}
-" color
-Plug 'tomasr/molokai'
-" Plug 'altercation/vim-colors-solarized'
-" Plug 'vim-scripts/wombat'
-" Plug 'tir_black'
-" pymode
-Plug 'guoang/python-mode', {'for': ['python'], 'branch': 'develop'}
-" sort import, better than isort
-Plug 'guoang/impsort.vim', {'for': ['python']}
-" 交互式运行python
-Plug 'nicoraffo/conque', {'for': ['python']}
-" 目录
-Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
-nmap <F3> :NERDTreeToggle<cr>
-" 快速注释
-Plug 'guoang/nerdcommenter'
-" 语法高亮
 Plug 'guoang/vim-polyglot', {'for': []}
-augroup plug_xtype
-    autocmd FileType * if expand('<amatch>') != 'markdown' && expand('<amatch>') != 'python' | call plug#load('vim-polyglot') | execute 'autocmd! plug_xtype' | endif
-augroup END
-" 快速打开
-Plug 'guoang/ctrlp.vim', {'on': 'CtrlP'}
-nmap <c-p> :CtrlP<cr>
-" 搜索
-Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
-nmap <c-e> <Plug>CtrlSFPrompt
-vmap <c-e> <Plug>CtrlSFVwordExec
-" 代码对齐
+Plug 'tomasr/molokai'
+" edit assist
+Plug 'guoang/delimitMate'
+Plug 'scrooloose/nerdcommenter'
+Plug 'easymotion/vim-easymotion'
+Plug 'sjl/gundo.vim'
+Plug 'ybian/smartim'
+Plug 'google/vim-searchindex'
+Plug 'tpope/vim-unimpaired'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
-" 快速补全片段
-" Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
-" 对齐线
-" Plug 'Yggdroot/indentLine'
+" system support
+Plug 'skywind3000/asyncrun.vim'
+" project support
+Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
+Plug 'mhinz/vim-signify'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'guoang/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+" language support
+Plug 'Shougo/echodoc.vim'
+Plug 'w0rp/ale'
+" C/C++
+Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
+Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
+Plug 'micbou/a.vim'
+" python
+Plug 'guoang/impsort.vim', {'for': ['python']}
+Plug 'vim-python/python-syntax', {'for': ['python']}
+Plug 'Vimjas/vim-python-pep8-indent', {'for': ['python']}
 " markdown
 Plug 'plasticboy/vim-markdown', {'for': []}
-augroup plug_xtype
-    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown') | execute 'autocmd! plug_xtype' | endif
-augroup END
-" markdown preview
-" Plug 'suan/vim-instant-markdown' -- good but too old, no mermaid support
-" Plug 'kannokanno/previm' -- with mermaid but not good enough
-" I use markdown-mate now, it's fantastic
-" https://tylingsoft.com/markdown-mate/
-" https://mdp.tylingsoft.com/
-" auto gen toc
 Plug 'mzlogin/vim-markdown-toc', {'for': []}
-augroup plug_xtype
-    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown-toc') | execute 'autocmd! plug_xtype' | endif
-augroup END
-
 " lua
 Plug 'vim-scripts/lua.vim', {'for': ['lua']}
 Plug 'xolox/vim-lua-ftplugin', {'for': ['lua']}
 Plug 'xolox/vim-misc', {'for': ['lua']}
-" motion
-Plug 'easymotion/vim-easymotion'
-" undo
-Plug 'sjl/gundo.vim'
-" input method manage
-Plug 'ybian/smartim'
-" clang format
-Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
-" display number of search matches & index of a current match
-Plug 'google/vim-searchindex'
+
+" Plug Lazy Loading
+" {{{
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') != 'markdown' && expand('<amatch>') != 'python' | call plug#load('vim-polyglot') | execute 'autocmd! plug_xtype' | endif
+augroup END
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown') | execute 'autocmd! plug_xtype' | endif
+augroup END
+augroup plug_xtype
+    autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown-toc') | execute 'autocmd! plug_xtype' | endif
+augroup END
+nnoremap <F3> :NERDTreeToggle<cr>
+nmap <c-e> <Plug>CtrlSFPrompt
+vmap <c-e> <Plug>CtrlSFVwordExec
+" }}}
 
 call plug#end()
 " }}}
@@ -115,10 +88,10 @@ set hls
 set ignorecase smartcase
 " 光标自由移动
 set whichwrap=b,s,<,[,],h,l,>
+" backspace
+set backspace=indent,eol,start
 " 共享剪贴板
 set clipboard=unnamed
-" paste模式
-set pastetoggle=<f7>
 " 自动缩进
 set autoindent
 " 采用C自动缩进方式
@@ -126,84 +99,63 @@ set cindent
 set sw=4
 " 行号
 set nu
-" 配色
-" let g:rehash256 = 1
-colo molokai
 " tab转空格
 set tabstop=4
 set expandtab
 " 折叠方式
 set fdm=marker
-nmap zff zf%
-" 窗口缩放
-nmap <c-h> :vertical resize -3<cr>
-nmap <c-l> :vertical resize +3<cr>
 " scroloffset
 set scrolloff=7
-" tab
-noremap <tab> <c-w>w
-noremap <s-tab> <c-w>W
-" jumplist
-nnoremap <c-n> <c-i>
-nnoremap <c-o> <c-o>
-" quick move
-nmap <c-j> ]M
-nmap <c-k> [M
-" go tabs
-nnoremap gn :bn<CR>
-nnoremap gp :bp<CR>
 " 不要自动切换目录
 set noautochdir
 " tags
-set tags=tags;
-" 防止误按f1
-nmap <f1> <esc>
-imap <f1> <esc>
-vmap <f1> <esc>
-cmap <f1> <esc>
+set tags=./.tags;,.tags;
 " encoding
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
 set fileencodings=ucs-brm,utf-8,chinese,cp936
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
-language message zh_CN.utf-8
-" backspace
-set backspace=indent,eol,start
 " highlight line, slow down cursor move
 " set cursorline
-" run python script
-if has("win32")
-    nmap \rp :!python.exe %<cr>
-else
-    nmap \rp :!ipython %<cr>
-endif
-" 使用conque和ipython来实现交互式运行
-if has("win32")
-    autocmd BufRead,BufNewFile *.py nmap ;r :execute 'ConqueTermSplit ipython.exe '.expand('%:p')<CR>
-else
-    autocmd BufRead,BufNewFile *.py nmap ;r :execute 'ConqueTermSplit python '.expand('%:p')<CR>
-endif
-" window size
 if has("win32")
     set lines=54 columns=200
 endif
-" spzs
-au BufRead,BufNewFile *.spzs set filetype=spzs
-au BufRead,BufNewFile *.{fx,nfx,tml,fxl} set filetype=hlsl
-au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
-" 环境变量python path, ycm等插件会用到
-let $PYTHONPATH = join(s:python_path, ':')
 " 缺省的，vim会使用下拉菜单和一个preview窗口来显示匹配项目，
 " 下拉菜单列出所有匹配的项目，预览窗口则显示选中项目的详细信息。
 " 打开预览窗口会导致下拉菜单抖动，因此我一般都去掉预览窗口的显示
 " :help completeopt
 set completeopt=longest,menu
+" switchbuf
+set switchbuf=vsplit
+
+" 配色
+" let g:rehash256 = 1
+colo molokai
+nnoremap zff zf%
+" 窗口缩放
+nnoremap <c-h> :vertical resize -3<cr>
+nnoremap <c-l> :vertical resize +3<cr>
+" tab
+nnoremap <tab> <c-w>w
+nnoremap <s-tab> <c-w>W
+" jumplist
+nnoremap <c-n> <c-i>
+nnoremap <c-o> <c-o>
+" location list
+nnoremap gn :lne<CR>
+nnoremap gp :lp<CR>
+" 防止误按f1
+nnoremap <f1> <esc>
+inoremap <f1> <esc>
+vnoremap <f1> <esc>
+cnoremap <f1> <esc>
+" motion
+inoremap <c-a> <home>
+inoremap <c-e> <end>
+inoremap <c-f> <right>
+inoremap <c-b> <left>
 " reload config
-nmap <leader><leader>r :source ~/.vim/vimrc<cr>:YcmRestartServer<cr>
-" set shell
-"set shell=/usr/local/bin/zsh
+nnoremap <leader><leader><leader> :source ~/.vim/vimrc<cr>:YcmRestartServer<cr>
 " jumplist
 autocmd VimEnter * clearjumps
 nnoremap G :execute 'keepjumps norm! G'<cr>
@@ -216,6 +168,18 @@ nnoremap { :execute 'keepjumps norm! ' . v:count1 . '{'<cr>
 nnoremap } :execute 'keepjumps norm! ' . v:count1 . '}'<cr>
 nnoremap [[ :execute 'keepjumps norm! ' . v:count1 . '[['<cr>
 nnoremap ]] :execute 'keepjumps norm! ' . v:count1 . ']]'<cr>
+
+language message zh_CN.utf-8
+
+" detect filetype
+au BufRead,BufNewFile *.spzs set filetype=spzs
+au BufRead,BufNewFile *.{fx,nfx,tml,fxl} set filetype=hlsl
+au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
+" exc to quit quickfix/locationlist
+au FileType qf nnoremap <buffer><silent> <esc> :quit<cr>
+
+" 环境变量python path, ycm等插件会用到
+let $PYTHONPATH = join(s:python_path, ':')
 " }}}
 
 " nerdTree
@@ -223,7 +187,7 @@ nnoremap ]] :execute 'keepjumps norm! ' . v:count1 . ']]'<cr>
 let NERDTreeIgnore=['\.pyc', '\.pyo', '\~$', '\.swp']
 " }}}
 
-" airline
+" vim-airline
 " {{{
 set laststatus=2
 let g:airline_theme = "jellybeans"
@@ -239,23 +203,17 @@ let g:airline_symbols = {}
 endif
 " }}}
 
-" tagbar
-" {{{
-" nmap <f5> :TagbarToggle<CR>
-" let g:tagbar_sort = 0
-" }}}
-
 " YouCompleteMe
 " {{{
 " 跳转
 function! SmartGoTo()
-let old_file = expand('%:p')
-let old_pos = getpos('.')
-exec "YcmCompleter GoTo"
-if old_file == expand('%:p') && old_pos == getpos('.') && tagfiles() != []
-    let ident = expand('<cword>')
-    exec 'tjump '.ident
-endif
+    let old_file = expand('%:p')
+    let old_pos = getpos('.')
+    exec "YcmCompleter GoTo"
+    if old_file == expand('%:p') && old_pos == getpos('.') && tagfiles() != []
+        let ident = expand('<cword>')
+        exec 'tjump '.ident
+    endif
 endfunction
 nnoremap <c-g>g :call SmartGoTo()<CR>
 nnoremap <c-g>d :YcmCompleter GoToDefinition<CR>
@@ -263,9 +221,9 @@ nnoremap <c-g>f :YcmCompleter FixIt<CR>
 nnoremap <c-g><c-g> :call SmartGoTo()<CR>
 nnoremap <c-g><c-d> :YcmCompleter GoToDefinition<CR>
 nnoremap <c-g><c-f> :YcmCompleter FixIt<CR>
-let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 " 关闭vim时检查ycm_extra_conf文件的信息
-let g:ycm_confirm_extra_conf = 0
+let g:ycm_confirm_extra_conf = 1
 " collect identifiers
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
@@ -282,6 +240,7 @@ let g:ycm_filetype_blacklist = {
   \ 'nerdtree' : 1,
   \ 'ctrlsf': 1,
   \ 'ctrlp': 1,
+  \ 'leaderf': 1,
   \ 'help': 1,
   \ 'md': 1,
   \ 'markdown': 1,
@@ -291,86 +250,30 @@ let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
 " debug
 let g:ycm_server_use_vim_stdout = 1
-let g:ycm_log_level = 'debug'
+" let g:ycm_log_level = 'debug'
 " }}}
 
-" ultisnips + vim-snippets
+" gutentags
 " {{{
-"定义存放代码片段的文件夹，使用自定义和默认的，将会的到全局，有冲突的会提示
-"let g:UltiSnipsSnippetDirectories=["plugged/vim-snippets/UltiSnips"]
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 
-" 参考https://github.com/Valloric/YouCompleteMe/issues/36#issuecomment-62941322
-" 解决ultisnips和ycm tab冲突，如果不使用下面的办法解决可以参考
-" https://github.com/Valloric/YouCompleteMe/issues/36#issuecomment-63205056的配置
-" begin
-"let g:UltiSnipsExpandTrigger="<Tab>"
-"let g:UltiSnipsJumpForwardTrigger="<Tab>"
-"let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-"" end
-"
-"" UltiSnips completion function that tries to expand a snippet. If there's no
-"" snippet for expanding, if there's no :nippet it just returns TAB key
-"function! g:UltiSnips_Complete()
-"call UltiSnips#ExpandSnippet()
-"if g:ulti_expand_res == 0
-"    call UltiSnips#JumpForwards()
-"    if g:ulti_jump_forwards_res == 0
-"        return "\<TAB>"
-"    endif
-"endif
-"return ""
-"endfunction
-"
-""au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-" }}}
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
 
-" python mode
-" {{{
-let g:pymode_python = 'python'
-" 取消run code，因为它有很多缺陷如不能与pdb交互，不能终止循环等
-let g:pymode_run = 0
-" cancle pymode folding
-let g:pymode_folding = 0
-" 关闭rope相关所有功能
-let g:pymode_rope = 0
-" close doc view
-let g:pymode_doc = 0
-let g:pymode_lint = 1
-" check on write
-let g:pymode_lint_on_write = 0
-" default code checkers
-let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
-" error message if cursor placed at the error line
-let g:pymode_lint_message = 1
-" 关闭自动弹出的错误信息窗口
-let g:pymode_lint_cwindow = 0
-" ignore
-let g:pymode_lint_ignore = ['E221', 'E203', 'E501', 'C901', 'E272', 'E129', 'W0404', 'E722']
-" ignore some builtins
-let g:pymode_lint_options_pyflakes = { 'builtins': 'logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem' }
-" customize motion
-au FileType python nmap yim yiM | nmap yic yiC
-au FileType python nmap dim diM | nmap dic diC
-au FileType python nmap vim viM | nmap vic viC
-au FileType python nmap yam yaM | nmap yac yaC
-au FileType python nmap dam daM | nmap dac daC
-au FileType python nmap vam vaM | nmap vac vaC
-au FileType python nmap <f2> :PymodeLint<cr>
-" }}}
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
 
-" ctrlp
-" {{{
-" 默认开启文件名模式
-let g:ctrlp_by_filename = 1
-" working in project root
-let g:ctrlp_working_path_mode = 'rw'
-" ignores
-let g:ctrlp_custom_ignore = {
-\ 'dir':  '\v[\/]\.(git|hg|svn)$',
-\ 'file': '\v\.(exe|so|dll|pyo|pyc)$',
-\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-\ }
-let g:ctrlp_lazy_del = 1
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
 " }}}
 
 " ctrlsf
@@ -384,7 +287,7 @@ let g:ctrlsf_mapping = {
 let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags']
 " }}}
 
-" nerdcomment
+" nerdcommenter
 " {{{
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
@@ -414,10 +317,10 @@ let g:indentLine_color_term = 66
 
 " tabular
 " {{{
-nmap <leader>t :Tabularize /
-vmap <leader>t :Tabularize /
-nmap <leader><leader>t :TrimSpacesCmd 
-vmap <leader><leader>t :TrimSpacesCmd 
+nnoremap <leader>t :Tabularize /
+vnoremap <leader>t :Tabularize /
+nnoremap <leader><leader>t :TrimSpacesCmd 
+vnoremap <leader><leader>t :TrimSpacesCmd 
 
 " tabular reverse
 function! TrimSpaces(identifier, ...) range
@@ -486,10 +389,16 @@ command! -bar -nargs=? -range TrimSpacesCmd <line1>,<line2>call TrimSpacesCmd(<q
 
 " }}}
 
-" conque
+" trim unused whitespaces
 " {{{
-" no warning
-let g:ConqueTerm_StartMessages = 0
+fun! TrimUnusedWhitespaces()
+    if &ft != 'cpp' && &ft != 'c' && &ft != 'python'
+        return
+    endif
+    let cursor_pos = getpos('.')
+    silent! %s/\s\+$//e
+    call setpos('.', cursor_pos)
+endfunction
 " }}}
 
 " Vim-markdown
@@ -554,7 +463,7 @@ let g:smartim_default = 'com.apple.keylayout.ABC'
 set timeoutlen=1000 ttimeoutlen=0
 " }}}
 
-" polyglot
+" vim-polyglot
 " {{{
 " markdown交由vim-markdown
 " python交由pymode
@@ -568,28 +477,9 @@ imap <bs> <Plug>delimitMateBS
 let b:delimitMate_balance_matchpairs = 1
 " }}}
 
-" c++
+" run cpp/python
 " {{{
-function! RunCpp()
-    if &ft != 'cpp' && &ft != 'c'
-        return
-    endif
-    let filename = expand('%')
-    let prefix = split(filename, '\.')[0]
-    let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
-    exe '!'.compile.';./'.prefix
-    call system('rm '.prefix)
-endfunction
 
-nmap <leader>rr :call RunCpp()<cr>
-
-au FileType c   nmap <f2> :!cpplint %<cr>
-au FileType cpp nmap <f2> :!cpplint %<cr>
-" au FileType c   map  <c-y> :pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
-" au FileType cpp map  <c-y> :pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
-" au FileType c   imap <c-y> <c-o>:pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
-" au FileType cpp imap <c-y> <c-o>:pyf /usr/local/opt/llvm/share/clang/clang-format.py<cr>
-" au InsertLeave *.cpp,*.cc,*.cxx,*.C,*.c,*.h,*.hpp,*.hxx exe ':pyf /usr/local/opt/llvm/share/clang/clang-format.py'
 " }}}
 
 " clang-format
@@ -598,39 +488,123 @@ let g:clang_format#code_style = 'google'
 let g:clang_format#detect_style_file = 1
 let g:clang_format#auto_format = 1
 let g:clang_format#auto_format_on_insert_leave = 0
-au FileType c,cpp map <c-y> :ClangFormat<CR>
-au FileType c,cpp imap <c-y> <c-o>:ClangFormat<CR>
 " }}}
 
-" syntastic - not compatible with ycm
+" asyncrun
 " {{{
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-"
-" " only active for c/c++
-" " "mode" can be mapped to one of two values - "active" or "passive".
-" " When set to "active", syntastic does automatic checking whenever a buffer is saved or initially opened.
-" " When set to "passive" syntastic only checks when the user calls :SyntasticCheck.
-" " The exceptions to these rules are defined with "active_filetypes" and "passive_filetypes".
-" " In passive mode, automatic checks are still done for filetypes in the "active_filetypes"
-" " array (and "passive_filetypes" is ignored).
-" " In active mode, automatic checks are not done for any filetypes in the "passive_filetypes"
-" " array ("active_filetypes" is ignored).
-" let g:syntastic_mode_map = {
-"     \ 'mode': 'passive',
-"     \ 'active_filetypes': ['c', 'cpp'],
-"     \ 'passive_filetypes': [] }
-"
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 0
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_aggregate_errors = 1
-"
-" let g:syntastic_cpp_cpplint_exec = 'cpplint'
-" let g:syntastic_cpp_checkers = ['cpplint']
-" " 设置cpplint的错误级别阈值
-" " 默认是5, 级别低于这一设置的不会显示
-" let g:syntastic_cpp_cpplint_thres = 1
+" 自动打开 quickfix window ，高度为 6
+let g:asyncrun_open = 10
+" 任务结束时候响铃提醒
+let g:asyncrun_bell = 1
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
+
+function! RunPython()
+    if &ft != 'python'
+        return
+    endif
+    if has("win32")
+        exe 'AsyncRun python.exe %'
+    else
+        exe 'AsyncRun python %'
+    endif
+endfunction
+
+function! RunCpp()
+    if &ft != 'cpp' && &ft != 'c'
+        return
+    endif
+    let filename = expand('%')
+    let prefix = split(filename, '\.')[0]
+    let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
+    exe 'AsyncRun '.compile.';./'.prefix.';rm '.prefix
+endfunction
+
+function! QuickRun()
+    call RunCpp()
+    call RunPython()
+endfunction
+nnoremap <leader>r :call QuickRun()<cr>
+
+" cpplint
+au FileType c,cpp nnoremap <silent> <f2> :AsyncRun cpplint %<cr>
+" cpp project
+au FileType c,cpp nnoremap <silent> <f5> :AsyncRun -cwd=<root>/build make<cr>
+au FileType c,cpp nnoremap <silent> <f6> :AsyncRun -cwd=<root>/build -raw make test<cr>
+au FileType c,cpp nnoremap <silent> <f7> :AsyncRun -cwd=<root>/build cmake ..<cr>
+" This function works only on language is English.
+function! IsQuickfixLoaded()
+    redir => bufoutput
+    exe "silent! buffers!"
+    " This echo clears a bug in printing that shows up when it is not present
+    silent! echo ""
+    redir END
+    return match(bufoutput, "Quickfix", 0, 0) != -1
+endfunction
+function! ToggleQuickfix()
+    if IsQuickfixLoaded()
+        :ccl
+        :exec "normal! \<c-w>l"
+    else
+        :copen
+        :exec "normal! \<c-w>J"
+    endif
+endfunction
+nnoremap <leader>q :call ToggleQuickfix()<cr>
+" }}}
+
+" echodoc
+" {{{
+set noshowmode
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#enable_force_overwrite = 1
+" }}}
+
+" leaderf
+" {{{
+let g:Lf_ShortcutF = '<c-p>'
+noremap <c-y> :LeaderfFunction<cr>
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Aa'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.cache/leaderf')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_ShowHidden = 1
+let g:Lf_FollowLinks = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+let g:Lf_UseVersionControlTool = 0
+let Lf_DefaultExternalTool = 'ag'
+let g:Lf_WildIgnore = {
+    \ 'dir': ['.git', '.svn', '.hg'],
+    \ 'file': ['*.sw?','~$*','*.exe','*.so','*.dylib','*.o','*.py[co]']
+    \}
+" }}}
+
+" ale
+" {{{
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_filetype_changed = 0
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_set_highlights = 1
+let g:ale_set_signs = 1
+let g:ale_echo_cursor = 0
+let g:ale_set_balloons = 0
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+    \ 'python': ['flake8', 'pycodestyle'],
+    \ 'cpp': ['cpplint', 'clang'],
+    \ 'c': ['cpplint', 'clang']
+    \}
+let g:ale_python_pycodestyle_options = '
+    \--ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
+    \'
+let g:ale_python_flake8_options = '
+    \--builtins=logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,
+        \action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem
+    \ --ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
+    \'
 " }}}
