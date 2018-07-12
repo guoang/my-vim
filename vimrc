@@ -2,7 +2,7 @@
 " {{{
 function! InitPythonPath()
     let s:python_path = ['.']
-    let g78_root = '/Volumes/G71/g78/MobaServer/'
+    let g78_root = '/Volumes/G71/g78/trunk/'
     if getcwd() =~ g78_root
         let g78_server = g78_root.'server/'
         let g78_client = g78_root.'client/game/script/'
@@ -39,7 +39,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'guoang/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
+Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 " language support
 Plug 'Shougo/echodoc.vim'
@@ -49,7 +49,6 @@ Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-compl
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
 " python
-Plug 'guoang/impsort.vim', {'for': ['python']}
 Plug 'vim-python/python-syntax', {'for': ['python']}
 Plug 'Vimjas/vim-python-pep8-indent', {'for': ['python']}
 " markdown
@@ -177,6 +176,7 @@ au BufRead,BufNewFile *.{fx,nfx,tml,fxl} set filetype=hlsl
 au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
 " exc to quit quickfix/locationlist
 au FileType qf nnoremap <buffer><silent> <esc> :quit<cr>
+au FileType qf nnoremap <buffer><silent> q :quit<cr>
 
 " 环境变量python path, ycm等插件会用到
 let $PYTHONPATH = join(s:python_path, ':')
@@ -285,6 +285,10 @@ let g:ctrlsf_mapping = {
     \ "vsplit": "<c-o>",
     \ }
 let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags']
+let g:ctrlsf_extra_root_markers = ['.root']
+let g:ctrlsf_auto_focus = {
+    \ "at": "start"
+    \ }
 " }}}
 
 " nerdcommenter
@@ -434,16 +438,6 @@ let g:gundo_preview_bottom = 1
 let g:gundo_close_on_revert = 1
 " }}}
 
-" impsort
-" {{{
-let g:impsort_start_nextline = 1
-highlight pythonImportedObject ctermfg=152 guifg=#afd7d7
-"highlight pythonImportedObject ctermfg=145 guifg=#afafaf
-"highlight pythonImportedObject ctermfg=109 guifg=#87afaf
-"highlight pythonImportedObject ctermfg=110 guifg=#87afd7
-"highlight pythonImportedObject ctermfg=116 guifg=#87d7d7
-" }}}
-
 " smartim
 " {{{
 let g:smartim_default = 'com.apple.keylayout.ABC'
@@ -492,8 +486,8 @@ let g:clang_format#auto_format_on_insert_leave = 0
 
 " asyncrun
 " {{{
-" 自动打开 quickfix window ，高度为 6
-let g:asyncrun_open = 10
+" 自动打开 quickfix window ，高度为20
+let g:asyncrun_open = 20
 " 任务结束时候响铃提醒
 let g:asyncrun_bell = 1
 let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
@@ -503,9 +497,9 @@ function! RunPython()
         return
     endif
     if has("win32")
-        exe 'AsyncRun python.exe %'
+        exe 'AsyncRun -raw -cwd=%:p:h python.exe %'
     else
-        exe 'AsyncRun python %'
+        exe 'AsyncRun -raw -cwd=%:p:h python %'
     endif
 endfunction
 
@@ -516,7 +510,7 @@ function! RunCpp()
     let filename = expand('%')
     let prefix = split(filename, '\.')[0]
     let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
-    exe 'AsyncRun '.compile.';./'.prefix.';rm '.prefix
+    exe 'AsyncRun -raw -cwd=%:p:h '.compile.';./'.prefix.';rm '.prefix
 endfunction
 
 function! QuickRun()
@@ -530,7 +524,11 @@ au FileType c,cpp nnoremap <silent> <f2> :AsyncRun cpplint %<cr>
 " cpp project
 au FileType c,cpp nnoremap <silent> <f5> :AsyncRun -cwd=<root>/build make<cr>
 au FileType c,cpp nnoremap <silent> <f6> :AsyncRun -cwd=<root>/build -raw make test<cr>
-au FileType c,cpp nnoremap <silent> <f7> :AsyncRun -cwd=<root>/build cmake ..<cr>
+au FileType c,cpp nnoremap <silent> <f7> :AsyncRun -cwd=<root>/build -raw cmake ..<cr>
+" }}}
+
+" quickfix
+" {{{
 " This function works only on language is English.
 function! IsQuickfixLoaded()
     redir => bufoutput
@@ -550,6 +548,28 @@ function! ToggleQuickfix()
     endif
 endfunction
 nnoremap <leader>q :call ToggleQuickfix()<cr>
+" }}}
+
+" locationlist
+" {{{
+function! IsLocationLoaded()
+    redir => bufoutput
+    exe "silent! buffers!"
+    " This echo clears a bug in printing that shows up when it is not present
+    silent! echo ""
+    redir END
+    return match(bufoutput, "Location", 0, 0) != -1
+endfunction
+function! ToggleLocationList()
+    if IsLocationLoaded()
+        :lclose
+        :exec "normal! \<c-w>l"
+    else
+        :lopen
+        :exec "normal! \<c-w>J"
+    endif
+endfunction
+nnoremap <leader>l :call ToggleLocationList()<cr>
 " }}}
 
 " echodoc
@@ -587,17 +607,20 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_filetype_changed = 0
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_set_highlights = 1
-let g:ale_set_signs = 1
+let g:ale_set_loclist = 1
+let g:ale_set_quickfix = 0
+let g:ale_set_highlights = 0
+let g:ale_set_signs = 0
 let g:ale_echo_cursor = 0
 let g:ale_set_balloons = 0
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
     \ 'python': ['flake8', 'pycodestyle'],
-    \ 'cpp': ['cpplint', 'clang'],
-    \ 'c': ['cpplint', 'clang']
+    \ 'cpp': ['cpplint'],
+    \ 'c': ['cpplint']
+    \}
+let g:ale_fixers = {
+    \ 'python': ['autopep8'],
     \}
 let g:ale_python_pycodestyle_options = '
     \--ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
@@ -607,4 +630,13 @@ let g:ale_python_flake8_options = '
         \action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem
     \ --ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
     \'
+let g:ale_python_autopep8_options = '
+    \--ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
+    \'
+" }}}
+
+" python-syntax
+" {{{
+let g:python_highlight_all = 1
+let g:python_version_2 = 1
 " }}}
