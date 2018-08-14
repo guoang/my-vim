@@ -2,7 +2,7 @@
 " {{{
 function! InitPythonPath()
     let s:python_path = ['.']
-    let g78_root = '/Volumes/G71/g78/trunk/'
+    let g78_root = '/Users/guoang/work/g78/trunk/'
     if getcwd() =~ g78_root
         let g78_server = g78_root.'server/'
         let g78_client = g78_root.'client/game/script/'
@@ -48,9 +48,10 @@ Plug 'w0rp/ale'
 Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
+" Plug 'uplus/vim-clang-rename', {'for': ['c', 'cpp']}
 " python
 Plug 'vim-python/python-syntax', {'for': ['python']}
-Plug 'Vimjas/vim-python-pep8-indent', {'for': ['python']}
+" Plug 'Vimjas/vim-python-pep8-indent', {'for': ['python']}  " too slow
 " markdown
 Plug 'plasticboy/vim-markdown', {'for': []}
 Plug 'mzlogin/vim-markdown-toc', {'for': []}
@@ -180,6 +181,8 @@ au FileType qf nnoremap <buffer><silent> q :quit<cr>
 
 " 环境变量python path, ycm等插件会用到
 let $PYTHONPATH = join(s:python_path, ':')
+" 粘贴时不拷贝
+vnoremap p "_dP
 " }}}
 
 " nerdTree
@@ -284,7 +287,7 @@ let g:ctrlsf_mapping = {
     \ "split": "",
     \ "vsplit": "<c-o>",
     \ }
-let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags']
+let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags', 'build']
 let g:ctrlsf_extra_root_markers = ['.root']
 let g:ctrlsf_auto_focus = {
     \ "at": "start"
@@ -403,6 +406,7 @@ fun! TrimUnusedWhitespaces()
     silent! %s/\s\+$//e
     call setpos('.', cursor_pos)
 endfunction
+au BufWritePre *.{cpp,c,cc,hpp,h,hh,py} :call TrimUnusedWhitespaces()
 " }}}
 
 " Vim-markdown
@@ -471,11 +475,6 @@ imap <bs> <Plug>delimitMateBS
 let b:delimitMate_balance_matchpairs = 1
 " }}}
 
-" run cpp/python
-" {{{
-
-" }}}
-
 " clang-format
 " {{{
 let g:clang_format#code_style = 'google'
@@ -487,7 +486,7 @@ let g:clang_format#auto_format_on_insert_leave = 0
 " asyncrun
 " {{{
 " 自动打开 quickfix window ，高度为20
-let g:asyncrun_open = 20
+let g:asyncrun_open = 10
 " 任务结束时候响铃提醒
 let g:asyncrun_bell = 1
 let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml']
@@ -497,9 +496,9 @@ function! RunPython()
         return
     endif
     if has("win32")
-        exe 'AsyncRun -raw -cwd=%:p:h python.exe %'
+        exe 'AsyncRun -raw -cwd=%:p:h python.exe %:p'
     else
-        exe 'AsyncRun -raw -cwd=%:p:h python %'
+        exe 'AsyncRun -raw -cwd=%:p:h python %:p'
     endif
 endfunction
 
@@ -507,22 +506,34 @@ function! RunCpp()
     if &ft != 'cpp' && &ft != 'c'
         return
     endif
-    let filename = expand('%')
+    let filename = expand('%:p')
     let prefix = split(filename, '\.')[0]
     let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
-    exe 'AsyncRun -raw -cwd=%:p:h '.compile.';./'.prefix.';rm '.prefix
+    exe 'AsyncRun -raw -cwd=%:p:h '.compile.';'.prefix.';rm '.prefix
+endfunction
+
+function! RunDot()
+    if &ft  != 'dot'
+        return
+    endif
+    let filename = expand('%:p')
+    let prefix = split(filename, '\.')[0]
+    let compile = 'dot -T svg -o '.prefix.'.svg '.filename
+    exe 'AsyncRun -raw -post=exe\ "cclose" -cwd=%:p:h '.compile.'; open '.prefix.'.svg'
 endfunction
 
 function! QuickRun()
     call RunCpp()
     call RunPython()
+    call RunDot()
 endfunction
 nnoremap <leader>r :call QuickRun()<cr>
 
-" cpplint
-au FileType c,cpp nnoremap <silent> <f2> :AsyncRun cpplint %<cr>
+" force stop
+au FileType qf nnoremap <buffer><silent> <c-c> :AsyncStop!<cr>
+
 " cpp project
-au FileType c,cpp nnoremap <silent> <f5> :AsyncRun -cwd=<root>/build make<cr>
+au FileType c,cpp nnoremap <silent> <f5> :AsyncRun -cwd=<root>/build -raw make<cr>
 au FileType c,cpp nnoremap <silent> <f6> :AsyncRun -cwd=<root>/build -raw make test<cr>
 au FileType c,cpp nnoremap <silent> <f7> :AsyncRun -cwd=<root>/build -raw cmake ..<cr>
 " }}}
@@ -597,7 +608,7 @@ let g:Lf_UseVersionControlTool = 0
 let Lf_DefaultExternalTool = 'ag'
 let g:Lf_WildIgnore = {
     \ 'dir': ['.git', '.svn', '.hg'],
-    \ 'file': ['*.sw?','~$*','*.exe','*.so','*.dylib','*.o','*.py[co]']
+    \ 'file': ['*.sw?','~$*','*.exe','*.so','*.dylib','*.o','*.py[co]','*.a']
     \}
 " }}}
 
@@ -615,7 +626,7 @@ let g:ale_echo_cursor = 0
 let g:ale_set_balloons = 0
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
-    \ 'python': ['flake8', 'pycodestyle'],
+    \ 'python': ['flake8'],
     \ 'cpp': ['cpplint'],
     \ 'c': ['cpplint']
     \}
@@ -627,7 +638,8 @@ let g:ale_python_pycodestyle_options = '
     \'
 let g:ale_python_flake8_options = '
     \--builtins=logger,gdata,gtime,sa_logger,genv,core_env,visual_env,hall_env,
-        \action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem
+        \action_env,gui,DebugLogic,mapper,robot_hooks_mgr,gblog,message,uisystem,
+        \watch_env
     \ --ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
     \'
 let g:ale_python_autopep8_options = '
