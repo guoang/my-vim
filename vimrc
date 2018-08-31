@@ -26,10 +26,10 @@ Plug 'guoang/vim-polyglot', {'for': []}
 Plug 'tomasr/molokai'
 " edit assist
 Plug 'guoang/delimitMate'
+Plug 'guoang/smartim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
 Plug 'sjl/gundo.vim'
-Plug 'ybian/smartim'
 Plug 'google/vim-searchindex'
 Plug 'tpope/vim-unimpaired'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
@@ -651,4 +651,17 @@ let g:ale_python_autopep8_options = '
 " {{{
 let g:python_highlight_all = 1
 let g:python_version_2 = 1
+" }}}
+
+" profile vim
+" {{{
+function! StartProfile()
+    exe "profile start profile.log"
+    exe "profile func *"
+    exe "profile file *"
+endfunction
+
+function! StopProfile()
+    exe "profile pause"
+endfunction
 " }}}
