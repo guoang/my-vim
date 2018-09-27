@@ -27,11 +27,12 @@ Plug 'tomasr/molokai'
 " edit assist
 Plug 'guoang/delimitMate'
 Plug 'guoang/smartim'
+Plug 'guoang/jumpstack.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
 Plug 'sjl/gundo.vim'
 Plug 'google/vim-searchindex'
-Plug 'tpope/vim-unimpaired'
+" Plug 'tpope/vim-unimpaired'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
 Plug 'skywind3000/asyncrun.vim'
@@ -138,9 +139,6 @@ nnoremap <c-l> :vertical resize +3<cr>
 " tab
 nnoremap <tab> <c-w>w
 nnoremap <s-tab> <c-w>W
-" jumplist
-nnoremap <c-n> <c-i>
-nnoremap <c-o> <c-o>
 " location list
 nnoremap gn :lne<CR>
 nnoremap gp :lp<CR>
@@ -157,17 +155,19 @@ inoremap <c-b> <left>
 " reload config
 nnoremap <leader><leader><leader> :source ~/.vim/vimrc<cr>:YcmRestartServer<cr>
 " jumplist
+" nnoremap <c-n> <c-i>
+" nnoremap <c-o> <c-o>
 autocmd VimEnter * clearjumps
-nnoremap G :execute 'keepjumps norm! G'<cr>
-nnoremap % :execute 'keepjumps norm! %'<cr>
-nnoremap n :execute 'keepjumps norm! ' . v:count1 . 'n'<cr>:SearchIndex<cr>
-nnoremap N :execute 'keepjumps norm! ' . v:count1 . 'N'<cr>:SearchIndex<cr>
-nnoremap ( :execute 'keepjumps norm! ' . v:count1 . '('<cr>
-nnoremap ) :execute 'keepjumps norm! ' . v:count1 . ')'<cr>
-nnoremap { :execute 'keepjumps norm! ' . v:count1 . '{'<cr>
-nnoremap } :execute 'keepjumps norm! ' . v:count1 . '}'<cr>
-nnoremap [[ :execute 'keepjumps norm! ' . v:count1 . '[['<cr>
-nnoremap ]] :execute 'keepjumps norm! ' . v:count1 . ']]'<cr>
+" nnoremap G :execute 'keepjumps norm! G'<cr>
+" nnoremap % :execute 'keepjumps norm! %'<cr>
+" nnoremap n :execute 'keepjumps norm! ' . v:count1 . 'n'<cr>:SearchIndex<cr>
+" nnoremap N :execute 'keepjumps norm! ' . v:count1 . 'N'<cr>:SearchIndex<cr>
+" nnoremap ( :execute 'keepjumps norm! ' . v:count1 . '('<cr>
+" nnoremap ) :execute 'keepjumps norm! ' . v:count1 . ')'<cr>
+" nnoremap { :execute 'keepjumps norm! ' . v:count1 . '{'<cr>
+" nnoremap } :execute 'keepjumps norm! ' . v:count1 . '}'<cr>
+" nnoremap [[ :execute 'keepjumps norm! ' . v:count1 . '[['<cr>
+" nnoremap ]] :execute 'keepjumps norm! ' . v:count1 . ']]'<cr>
 
 language message zh_CN.utf-8
 
@@ -210,6 +210,7 @@ endif
 " {{{
 " 跳转
 function! SmartGoTo()
+    call jumpstack#Mark()
     let old_file = expand('%:p')
     let old_pos = getpos('.')
     exec "YcmCompleter GoTo"
@@ -217,6 +218,7 @@ function! SmartGoTo()
         let ident = expand('<cword>')
         exec 'tjump '.ident
     endif
+    call jumpstack#Mark()
 endfunction
 nnoremap <c-g>g :call SmartGoTo()<CR>
 nnoremap <c-g>d :YcmCompleter GoToDefinition<CR>
@@ -326,8 +328,8 @@ let g:indentLine_color_term = 66
 " {{{
 nnoremap <leader>t :Tabularize /
 vnoremap <leader>t :Tabularize /
-nnoremap <leader><leader>t :TrimSpacesCmd 
-vnoremap <leader><leader>t :TrimSpacesCmd 
+nnoremap <leader><leader>t :TrimSpacesCmd
+vnoremap <leader><leader>t :TrimSpacesCmd
 
 " tabular reverse
 function! TrimSpaces(identifier, ...) range
@@ -385,9 +387,9 @@ function! TrimSpacesCmd(args) range
     let end_line -= 1
     if len(arg_list) == 1
         execute start_line.','.end_line 'call TrimSpaces("'.arg_list[0].'")'
-    elseif len(arg_list) == 2                                                
+    elseif len(arg_list) == 2
         execute start_line.','.end_line 'call TrimSpaces("'.arg_list[0].'",'.arg_list[1].')'
-    elseif len(arg_list) == 3                                                
+    elseif len(arg_list) == 3
         execute start_line.','.end_line 'call TrimSpaces("'.arg_list[0].'",'.arg_list[1].','.arg_list[2].')'
     endif
 endfunction
@@ -449,7 +451,7 @@ let g:smartim_default = 'com.apple.keylayout.ABC'
 " mode.  When this option is off, the cursor and function keys cannot be
 " used in Insert mode if they start with an <Esc>.  The advantage of
 " this is that the single <Esc> is recognized immediately, instead of
-" after one second. 
+" after one second.
 " NOTE: set noek conflict with nocompatible!
 " set noek
 " by default, timeoutlen is 1000 and ttimeoutlen is -1,
@@ -664,4 +666,11 @@ endfunction
 function! StopProfile()
     exe "profile pause"
 endfunction
+" }}}
+
+" jumpstack
+" {{{
+nnoremap <c-n> :call jumpstack#JumpNext()<cr>
+nnoremap <c-o> :call jumpstack#JumpPrevious()<cr>
+autocmd BufReadPost * call jumpstack#Mark()
 " }}}
