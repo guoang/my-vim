@@ -672,5 +672,5 @@ endfunction
 " {{{
 nnoremap <c-n> :call jumpstack#JumpNext()<cr>
 nnoremap <c-o> :call jumpstack#JumpPrevious()<cr>
-autocmd BufReadPost * call jumpstack#Mark()
+nnoremap <c-m> :call jumpstack#Mark(2)<cr>
 " }}}
