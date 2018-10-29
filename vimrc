@@ -120,6 +120,10 @@ set fileencodings=ucs-brm,utf-8,chinese,cp936
 " set cursorline
 if has("win32")
     set lines=54 columns=200
+    set langmenu=zh_CN
+    let $LANG='zh_CN.UTF-8'
+    source $VIMRUNTIME/delmenu.vim
+    source $VIMRUNTIME/menu.vim
 endif
 " 缺省的，vim会使用下拉菜单和一个preview窗口来显示匹配项目，
 " 下拉菜单列出所有匹配的项目，预览窗口则显示选中项目的详细信息。
