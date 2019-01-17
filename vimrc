@@ -33,6 +33,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
 Plug 'sjl/gundo.vim'
 Plug 'google/vim-searchindex'
+Plug 'hotoo/pangu.vim'
 " Plug 'tpope/vim-unimpaired'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
@@ -46,6 +47,7 @@ Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 " language support
 Plug 'Shougo/echodoc.vim'
 Plug 'w0rp/ale'
+Plug 'rizzatti/dash.vim'
 " C/C++
 Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
@@ -220,7 +222,8 @@ let NERDTreeIgnore=['\.pyc', '\.pyo', '\~$', '\.swp']
 " vim-airline
 " {{{
 set laststatus=2
-let g:airline_theme = "jellybeans"
+" let g:airline_theme = "jellybeans"
+let g:airline_theme = "onedark"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
@@ -551,10 +554,30 @@ function! RunDot()
     exe 'AsyncRun -raw -post=exe\ "cclose" -cwd=%:p:h '.compile.'; open '.prefix.'.svg'
 endfunction
 
+function! RunMarkdown()
+    if &ft  != 'markdown'
+        return
+    endif
+    call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
+endfunction
+
+function! RunPhp()
+    if &ft  != 'php'
+        return
+    endif
+    if has("win32")
+        exe 'AsyncRun -raw -cwd=%:p:h php.exe %:p'
+    else
+        exe 'AsyncRun -raw -cwd=%:p:h php %:p'
+    endif
+endfunction
+
 function! QuickRun()
     call RunCpp()
     call RunPython()
     call RunDot()
+    call RunMarkdown()
+    call RunPhp()
 endfunction
 nnoremap <leader>r :call QuickRun()<cr>
 
@@ -622,7 +645,7 @@ let g:echodoc#enable_force_overwrite = 1
 " leaderf
 " {{{
 let g:Lf_ShortcutF = '<c-p>'
-noremap <c-y> :LeaderfFunction<cr>
+noremap <c-y> :LeaderfBufTag<cr>
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
 let g:Lf_WorkingDirectoryMode = 'Aa'
 let g:Lf_WindowHeight = 0.30
@@ -639,6 +662,7 @@ let g:Lf_WildIgnore = {
     \ 'dir': ['.git', '.svn', '.hg'],
     \ 'file': ['*.sw?','~$*','*.exe','*.so','*.dylib','*.o','*.py[co]','*.a']
     \}
+autocmd BufEnter * setlocal bufhidden=unload
 " }}}
 
 " ale
@@ -671,6 +695,7 @@ let g:ale_python_flake8_options = '
         \watch_env
     \ --ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
     \'
+let g:ale_python_flake8_executable = 'python2'
 let g:ale_python_autopep8_options = '
     \--ignore=E221,E203,E501,C901,E272,E129,W0404,E722,W503,W504,E241
     \'
@@ -700,4 +725,26 @@ endfunction
 nnoremap <c-n> :call jumpstack#JumpNext()<cr>
 nnoremap <c-o> :call jumpstack#JumpPrevious()<cr>
 nnoremap <c-m> :call jumpstack#Mark(2)<cr>
+" }}}
+
+" dash
+" {{{
+nmap <c-d> :Dash 
+let g:dash_map = {
+    \ 'c' : ['c', 'c++'],
+    \ 'cpp': ['c', 'c++'],
+    \ 'py': ['python2', 'python3'],
+    \ 'markdown': ['markdown'],
+    \ 'vim': ['vim'],
+    \ 'cmake': ['cmake'],
+    \ 'zsh': ['bash'],
+    \ 'bash': ['bash'],
+    \ 'sh': ['bash'],
+    \ 'shell': ['bash']
+    \ }
+" }}}
+
+" pangu
+" {{{
+autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
 " }}}
