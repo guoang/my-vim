@@ -38,16 +38,18 @@ Plug 'hotoo/pangu.vim'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
 Plug 'skywind3000/asyncrun.vim'
+Plug 'danro/rename.vim'
 " project support
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
-Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+Plug 'Yggdroot/LeaderF', {'do': './install.sh'}
 " language support
 Plug 'Shougo/echodoc.vim'
 Plug 'w0rp/ale'
 Plug 'rizzatti/dash.vim'
+Plug 'fatih/vim-go', {'for': ['go'], 'do': ':GoUpdateBinaries'}
 " C/C++
 Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
@@ -239,15 +241,30 @@ endif
 " YouCompleteMe
 " {{{
 " 跳转
+function! GoYcm()
+    exec "YcmCompleter GoTo"
+endfunction
+
+function! GoTags()
+    if tagfiles() == []
+        return
+    endif
+    let ident = expand('<cword>')
+    exec 'tjump '.ident
+endfunction
+
 function! SmartGoTo()
     call jumpstack#Mark()
+    let w:jumpstack_in_jump = 1
     let old_file = expand('%:p')
     let old_pos = getpos('.')
-    exec "YcmCompleter GoTo"
-    if old_file == expand('%:p') && old_pos == getpos('.') && tagfiles() != []
-        let ident = expand('<cword>')
-        exec 'tjump '.ident
+    if old_file == expand('%:p') && old_pos == getpos('.')
+        call GoYcm()
     endif
+    if old_file == expand('%:p') && old_pos == getpos('.')
+        call GoTags()
+    endif
+    let w:jumpstack_in_jump = 0
     call jumpstack#Mark()
 endfunction
 nnoremap <c-g>g :call SmartGoTo()<CR>
@@ -286,6 +303,9 @@ let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
 " debug
 let g:ycm_server_use_vim_stdout = 1
 " let g:ycm_log_level = 'debug'
+" trigger
+" let g:ycm_min_num_of_chars_for_completion = 99
+" let g:ycm_auto_trigger = 0
 " }}}
 
 " gutentags
@@ -539,7 +559,7 @@ function! RunCpp()
         return
     endif
     let filename = expand('%:p')
-    let prefix = split(filename, '\.')[0]
+    let prefix = join(split(filename, '\.')[:-2], '.')
     let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
     exe 'AsyncRun -raw -cwd=%:p:h '.compile.';'.prefix.';rm '.prefix
 endfunction
@@ -549,7 +569,7 @@ function! RunDot()
         return
     endif
     let filename = expand('%:p')
-    let prefix = split(filename, '\.')[0]
+    let prefix = join(split(filename, '\.')[:-2], '.')
     let compile = 'dot -T svg -o '.prefix.'.svg '.filename
     exe 'AsyncRun -raw -post=exe\ "cclose" -cwd=%:p:h '.compile.'; open '.prefix.'.svg'
 endfunction
@@ -572,12 +592,20 @@ function! RunPhp()
     endif
 endfunction
 
+function! RunGo()
+    if &ft  != 'go'
+        return
+    endif
+    exe 'GoRun'
+endfunction
+
 function! QuickRun()
     call RunCpp()
     call RunPython()
     call RunDot()
     call RunMarkdown()
     call RunPhp()
+    call RunGo()
 endfunction
 nnoremap <leader>r :call QuickRun()<cr>
 
@@ -679,6 +707,7 @@ let g:ale_echo_cursor = 0
 let g:ale_set_balloons = 0
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
+    \ 'markdown': ['alex'],
     \ 'python': ['flake8'],
     \ 'cpp': ['cpplint'],
     \ 'c': ['cpplint']
@@ -724,12 +753,13 @@ endfunction
 " {{{
 nnoremap <c-n> :call jumpstack#JumpNext()<cr>
 nnoremap <c-o> :call jumpstack#JumpPrevious()<cr>
-nnoremap <c-m> :call jumpstack#Mark(2)<cr>
+autocmd BufReadPre * call jumpstack#Mark()
+autocmd BufReadPost * call jumpstack#Mark()
 " }}}
 
 " dash
 " {{{
-nmap <c-d> :Dash 
+nmap <c-d> :Dash
 let g:dash_map = {
     \ 'c' : ['c', 'c++'],
     \ 'cpp': ['c', 'c++'],
@@ -747,4 +777,15 @@ let g:dash_map = {
 " pangu
 " {{{
 autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
+" }}}
+
+" go
+" {{{
+autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-g>g :GoDef<CR> | endif
+autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-g><c-g> :GoDef<CR> | endif
+autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-o> :GoDefPop<CR> | endif
+autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g>g :call SmartGoTo()<cr> | endif
+autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g><c-g> :call SmartGoTo()<cr> | endif
+autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-o> :call jumpstack#JumpPrevious()<cr> | endif
+
 " }}}
