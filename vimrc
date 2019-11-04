@@ -54,6 +54,7 @@ Plug 'fatih/vim-go', {'for': ['go'], 'do': ':GoUpdateBinaries'}
 Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
+" Plug 'majutsushi/tagbar'  " too slow!!
 " Plug 'uplus/vim-clang-rename', {'for': ['c', 'cpp']}
 " python
 Plug 'vim-python/python-syntax', {'for': ['python']}
@@ -484,7 +485,7 @@ let g:vim_markdown_new_list_item_indent = 0
 
 " markdown-mate
 " {{{
-autocmd filetype markdown call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
+" autocmd filetype markdown call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
 " }}}
 
 " gundo
@@ -560,7 +561,7 @@ function! RunCpp()
     endif
     let filename = expand('%:p')
     let prefix = join(split(filename, '\.')[:-2], '.')
-    let compile = 'c++ '.filename.' -std=c++11 -o '.prefix
+    let compile = 'c++ '.filename.' -std=c++11 -I/usr/local/include/ -L/usr/local/lib -lboost_system -o '.prefix
     exe 'AsyncRun -raw -cwd=%:p:h '.compile.';'.prefix.';rm '.prefix
 endfunction
 
@@ -578,8 +579,23 @@ function! RunMarkdown()
     if &ft  != 'markdown'
         return
     endif
-    call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
+    " call system('open -a /Applications/Markdown\ Mate.app -g ' . expand('%:p'))
+    "
+    " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/dist/sample.md')
+    " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/node_modules/markdown-core/dist/sample.md')
+    "
+    call job_start('open http://guoang.me/md\?name\=' . expand('%:t'))
 endfunction
+
+function! UploadMarkdown()
+    if &ft  != 'markdown'
+        return
+    endif
+    call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' http@vultr:~/www/md/')
+    " exe 'AsyncRun -post=exe\ "cclose" ' . 'scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' root@vultr:~/http_root/md/'
+endfunction
+" auto upload markdown
+auto BufWritePost *.markdown,*.md call UploadMarkdown()
 
 function! RunPhp()
     if &ft  != 'php'
@@ -788,4 +804,28 @@ autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g>g :call SmartGo
 autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g><c-g> :call SmartGoTo()<cr> | endif
 autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-o> :call jumpstack#JumpPrevious()<cr> | endif
 
+" }}}
+
+"easymotion
+" {{{
+let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
+" Use uppercase target labels and type as a lower case
+let g:EasyMotion_use_upper = 0
+ " type `l` and match `l`&`L`
+let g:EasyMotion_smartcase = 1
+" Smartsign (type `3` and match `3`&`#`)
+let g:EasyMotion_use_smartsign_us = 1
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+nmap ff <Plug>(easymotion-overwin-f2)
+map fn <Plug>(easymotion-sn)
+omap fn <Plug>(easymotion-tn)
+map fl <Plug>(easymotion-lineforward)
+map fj <Plug>(easymotion-j)
+map fk <Plug>(easymotion-k)
+map fh <Plug>(easymotion-linebackward)
+" }}}
+
+" tagbar
+" {{{
+nmap <F8> :TagbarToggle<CR>
 " }}}
