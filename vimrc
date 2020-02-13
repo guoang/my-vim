@@ -1,19 +1,36 @@
+" g78
+" {{{
+let g:g78_root = '/Users/guoang/work/g78/trunk/'
+let g:g78_server = g:g78_root.'server/'
+let g:g78_client = g:g78_root.'client/game/script/'
 " Python Path
 " {{{
 function! InitPythonPath()
     let s:python_path = ['.']
-    let g78_root = '/Users/guoang/work/g78/trunk/'
-    if getcwd() =~ g78_root
-        let g78_server = g78_root.'server/'
-        let g78_client = g78_root.'client/game/script/'
-        call add(s:python_path, g78_server)
-        call add(s:python_path, g78_server.'script')
-        call add(s:python_path, g78_server.'mbserver')
-        call add(s:python_path, g78_server.'mbserver/Lib')
-        call add(s:python_path, g78_client)
+    if getcwd() =~ g:g78_root
+        call add(s:python_path, g:g78_server)
+        call add(s:python_path, g:g78_server.'script')
+        call add(s:python_path, g:g78_server.'mbserver')
+        call add(s:python_path, g:g78_server.'mbserver/Lib')
+        call add(s:python_path, g:g78_client)
     endif
 endfunction
 call InitPythonPath()
+" }}}
+" Upload File
+" {{{
+function! UploadG78()
+    if &ft != 'python' && &ft != 'markdown' && &ft != 'cpp' && &ft != 'c'
+        return
+    endif
+    let abs_path = expand('%:p')
+    if abs_path =~ g:g78_root
+        let rel_path = split(abs_path, g:g78_root)[0]
+        call job_start('scp -P 32200 -i ~/.ssh/nopasswd ' . expand('%:p') . ' gzguoang@dev:~/g78/trunk/'.rel_path)
+    endif
+endfunction
+auto BufWritePost *.markdown,*.md,*.py,*.cpp,*.cc,*.c,*.h,*.hpp call UploadG78()
+" }}}
 " }}}
 
 " Plug settings
@@ -42,6 +59,7 @@ Plug 'danro/rename.vim'
 " project support
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
+Plug 'tpope/vim-fugitive'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
 Plug 'Yggdroot/LeaderF', {'do': './install.sh'}
@@ -138,6 +156,8 @@ endif
 set completeopt=longest,menu
 " switchbuf
 set switchbuf=vsplit
+
+" set mouse=a
 
 syntax on
 
@@ -561,7 +581,7 @@ function! RunCpp()
     endif
     let filename = expand('%:p')
     let prefix = join(split(filename, '\.')[:-2], '.')
-    let compile = 'c++ '.filename.' -std=c++11 -I/usr/local/include/ -L/usr/local/lib -lboost_system -o '.prefix
+    let compile = 'c++ '.filename.' -g -std=c++17 -I/usr/local/include/ -L/usr/local/lib -lboost_system -o '.prefix
     exe 'AsyncRun -raw -cwd=%:p:h '.compile.';'.prefix.';rm '.prefix
 endfunction
 
