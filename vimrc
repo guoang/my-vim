@@ -58,7 +58,7 @@ Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
 Plug 'skywind3000/asyncrun.vim'
 Plug 'danro/rename.vim'
-Plug 'tpope/vim-obsession', {'do': 'vim -u NONE -c "helptags doc" -c q'}
+Plug 'tpope/vim-obsession', {'do': 'vim -u NONE -c \"helptags doc\" -c q'}
 " project support
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
@@ -72,7 +72,7 @@ Plug 'w0rp/ale'
 Plug 'rizzatti/dash.vim'
 Plug 'fatih/vim-go', {'for': ['go'], 'do': ':GoUpdateBinaries'}
 " C/C++
-Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer --cs-completer'}
+Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
 " Plug 'majutsushi/tagbar'  " too slow!!
