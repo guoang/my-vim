@@ -27,6 +27,8 @@ function! UploadG78()
     if abs_path =~ g:g78_root
         let rel_path = split(abs_path, g:g78_root)[0]
         call job_start('scp -P 32200 -i ~/.ssh/nopasswd ' . expand('%:p') . ' gzguoang@dev:~/g78/trunk/'.rel_path)
+        call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' guoang@home_win:~/work/g78/trunk/'.rel_path)
+        call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' guoang@office_win:~/work/g78/trunk/'.rel_path)
     endif
 endfunction
 auto BufWritePost *.markdown,*.md,*.py,*.cpp,*.cc,*.c,*.h,*.hpp call UploadG78()
@@ -56,6 +58,7 @@ Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
 Plug 'skywind3000/asyncrun.vim'
 Plug 'danro/rename.vim'
+Plug 'tpope/vim-obsession', {'do': 'vim -u NONE -c "helptags doc" -c q'}
 " project support
 Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
@@ -704,6 +707,7 @@ nnoremap <leader>l :call ToggleLocationList()<cr>
 set noshowmode
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#enable_force_overwrite = 1
+let g:echodoc#type = "float"
 " }}}
 
 " leaderf
