@@ -7,7 +7,7 @@ let g:g78_client = g:g78_root.'client/game/script/'
 " {{{
 function! InitPythonPath()
     let s:python_path = ['.']
-    if getcwd() =~ g:g78_root
+    if getcwd() == g:g78_root
         call add(s:python_path, g:g78_server)
         call add(s:python_path, g:g78_server.'script')
         call add(s:python_path, g:g78_server.'mbserver')
