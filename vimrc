@@ -1,38 +1,21 @@
-" g78
-" {{{
-let g:g78_root = '/Users/guoang/work/g78/trunk/'
-let g:g78_server = g:g78_root.'server/'
-let g:g78_client = g:g78_root.'client/game/script/'
-" Python Path
-" {{{
-function! InitPythonPath()
-    let s:python_path = ['.']
-    if getcwd() == g:g78_root
-        call add(s:python_path, g:g78_server)
-        call add(s:python_path, g:g78_server.'script')
-        call add(s:python_path, g:g78_server.'mbserver')
-        call add(s:python_path, g:g78_server.'mbserver/Lib')
-        call add(s:python_path, g:g78_client)
-    endif
-endfunction
-call InitPythonPath()
-" }}}
 " Upload File
 " {{{
 function! UploadG78()
     if &ft != 'python' && &ft != 'markdown' && &ft != 'cpp' && &ft != 'c'
         return
     endif
+    let g78_root = '/Users/guoang/work/g78/trunk/'
     let abs_path = expand('%:p')
-    if abs_path =~ g:g78_root
-        let rel_path = split(abs_path, g:g78_root)[0]
-        call job_start('scp -P 32200 -i ~/.ssh/nopasswd ' . expand('%:p') . ' gzguoang@dev:~/g78/trunk/'.rel_path)
-        call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' guoang@home_win:~/work/g78/trunk/'.rel_path)
-        call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' guoang@office_win:~/work/g78/trunk/'.rel_path)
+    if abs_path =~ g78_root
+        let rel_path = split(abs_path, g78_root)[0]
+        call job_start('scp -P 32200 ' . expand('%:p') . ' gzguoang@dev:~/g78/trunk/'.rel_path)
+        call job_start('scp ' . expand('%:p') . ' guoang@home_win:~/work/g78/trunk/'.rel_path)
+        call job_start('scp ' . expand('%:p') . ' guoang@home_win:~/work/g78/trunk2/'.rel_path)
+        call job_start('scp ' . expand('%:p') . ' gzguoang@office_win:D:/work/g78/trunk/'.rel_path)
+        call job_start('scp ' . expand('%:p') . ' gzguoang@office_win:D:/work/g78/trunk2/'.rel_path)
     endif
 endfunction
 auto BufWritePost *.markdown,*.md,*.py,*.cpp,*.cc,*.c,*.h,*.hpp call UploadG78()
-" }}}
 " }}}
 
 " Plug settings
@@ -42,37 +25,39 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'guoang/vim-airline-themes'
 Plug 'guoang/vim-polyglot', {'for': []}
-Plug 'tomasr/molokai'
+" Plug 'tomasr/molokai'
 Plug 'joshdick/onedark.vim'
+" Plug 'luochen1990/rainbow'    # 括号着色
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " edit assist
 Plug 'guoang/delimitMate'
 Plug 'guoang/smartim'
 Plug 'guoang/jumpstack.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'easymotion/vim-easymotion'
-Plug 'sjl/gundo.vim'
+" Plug 'sjl/gundo.vim'
 Plug 'google/vim-searchindex'
-Plug 'hotoo/pangu.vim'
+" Plug 'hotoo/pangu.vim'
 " Plug 'tpope/vim-unimpaired'
 Plug 'godlygeek/tabular', {'on': 'Tabularize'}
 " system support
 Plug 'skywind3000/asyncrun.vim'
 Plug 'danro/rename.vim'
-Plug 'tpope/vim-obsession', {'do': 'vim -u NONE -c \"helptags doc\" -c q'}
+" Plug 'tpope/vim-obsession', {'do': 'vim -u NONE -c \"helptags doc\" -c q'}
 " project support
-Plug 'scrooloose/nerdtree', {'on': 'NERDTreeToggle'}
+Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
-Plug 'Yggdroot/LeaderF', {'do': './install.sh'}
+" Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
+Plug 'guoang/LeaderF', {'do': './install.sh'}
 " language support
-Plug 'Shougo/echodoc.vim'
+" Plug 'Shougo/echodoc.vim'
 Plug 'w0rp/ale'
 Plug 'rizzatti/dash.vim'
-Plug 'fatih/vim-go', {'for': ['go'], 'do': ':GoUpdateBinaries'}
 " C/C++
-Plug 'Valloric/YouCompleteMe', {'do': './install.py --clang-completer'}
+Plug 'ycm-core/YouCompleteMe', {'do': './install.py --clang-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
 " Plug 'majutsushi/tagbar'  " too slow!!
@@ -84,9 +69,9 @@ Plug 'vim-python/python-syntax', {'for': ['python']}
 Plug 'plasticboy/vim-markdown', {'for': []}
 Plug 'mzlogin/vim-markdown-toc', {'for': []}
 " lua
-Plug 'vim-scripts/lua.vim', {'for': ['lua']}
-Plug 'xolox/vim-lua-ftplugin', {'for': ['lua']}
-Plug 'xolox/vim-misc', {'for': ['lua']}
+" Plug 'vim-scripts/lua.vim', {'for': ['lua']}
+" Plug 'xolox/vim-lua-ftplugin', {'for': ['lua']}
+" Plug 'xolox/vim-misc', {'for': ['lua']}
 
 " Plug Lazy Loading
 " {{{
@@ -100,8 +85,8 @@ augroup plug_xtype
     autocmd FileType * if expand('<amatch>') == 'markdown' | call plug#load('vim-markdown-toc') | execute 'autocmd! plug_xtype' | endif
 augroup END
 nnoremap <F3> :NERDTreeToggle<cr>
-nmap <c-e> <Plug>CtrlSFPrompt
-vmap <c-e> <Plug>CtrlSFVwordExec
+" nmap <c-e> <Plug>CtrlSFPrompt
+" vmap <c-e> <Plug>CtrlSFVwordExec
 " }}}
 
 call plug#end()
@@ -137,7 +122,7 @@ set scrolloff=7
 " 不要自动切换目录
 set noautochdir
 " tags
-set tags=./.tags;,.tags;
+" set tags=./.tags;,.tags;
 " encoding
 set encoding=utf-8
 set termencoding=utf-8
@@ -195,8 +180,8 @@ nnoremap <c-l> :vertical resize +3<cr>
 nnoremap <tab> <c-w>w
 nnoremap <s-tab> <c-w>W
 " location list
-nnoremap gn :lne<CR>
-nnoremap gp :lp<CR>
+" nnoremap gn :lne<CR>
+" nnoremap gp :lp<CR>
 " 防止误按f1
 nnoremap <f1> <esc>
 inoremap <f1> <esc>
@@ -234,10 +219,16 @@ au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
 au FileType qf nnoremap <buffer><silent> <esc> :quit<cr>
 au FileType qf nnoremap <buffer><silent> q :quit<cr>
 
-" 环境变量python path, ycm等插件会用到
-let $PYTHONPATH = join(s:python_path, ':')
 " 粘贴时不拷贝
 vnoremap p "_dP
+
+" 检测 ~/.cache/vim_undo 不存在就新建
+if !isdirectory(expand('~/.cache/vim_undo'))
+   silent! call mkdir(expand('~/.cache/vim_undo'), 'p')
+endif
+" put undo file into cache dir
+set undodir=~/.cache/vim_undo/
+set undofile
 " }}}
 
 " nerdTree
@@ -264,42 +255,9 @@ endif
 
 " YouCompleteMe
 " {{{
-" 跳转
-function! GoYcm()
-    exec "YcmCompleter GoTo"
-endfunction
-
-function! GoTags()
-    if tagfiles() == []
-        return
-    endif
-    let ident = expand('<cword>')
-    exec 'tjump '.ident
-endfunction
-
-function! SmartGoTo()
-    call jumpstack#Mark()
-    let w:jumpstack_in_jump = 1
-    let old_file = expand('%:p')
-    let old_pos = getpos('.')
-    if old_file == expand('%:p') && old_pos == getpos('.')
-        call GoYcm()
-    endif
-    if old_file == expand('%:p') && old_pos == getpos('.')
-        call GoTags()
-    endif
-    let w:jumpstack_in_jump = 0
-    call jumpstack#Mark()
-endfunction
-nnoremap <c-g>g :call SmartGoTo()<CR>
-nnoremap <c-g>d :YcmCompleter GoToDefinition<CR>
-nnoremap <c-g>f :YcmCompleter FixIt<CR>
-nnoremap <c-g><c-g> :call SmartGoTo()<CR>
-nnoremap <c-g><c-d> :YcmCompleter GoToDefinition<CR>
-nnoremap <c-g><c-f> :YcmCompleter FixIt<CR>
 " let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 " 关闭vim时检查ycm_extra_conf文件的信息
-let g:ycm_confirm_extra_conf = 1
+let g:ycm_confirm_extra_conf = 0
 " collect identifiers
 let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
@@ -313,6 +271,7 @@ let g:ycm_complete_in_strings = 1
 " black_list
 let g:ycm_filetype_blacklist = {
   \ 'tagbar' : 1,
+  \ 'notes': 1,
   \ 'nerdtree' : 1,
   \ 'ctrlsf': 1,
   \ 'ctrlp': 1,
@@ -320,6 +279,7 @@ let g:ycm_filetype_blacklist = {
   \ 'help': 1,
   \ 'md': 1,
   \ 'markdown': 1,
+  \ 'mail': 1,
   \}
 " use c-n/c-p, default tab/s-tab
 let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
@@ -328,20 +288,40 @@ let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
 let g:ycm_server_use_vim_stdout = 1
 " let g:ycm_log_level = 'debug'
 " trigger
-" let g:ycm_min_num_of_chars_for_completion = 99
+let g:ycm_min_num_of_chars_for_completion = 99
 " let g:ycm_auto_trigger = 0
+
+" Diagnostics
+let g:ycm_show_diagnostics_ui = 1
+let g:ycm_error_symbol = '>>'
+let g:ycm_warning_symbol = '>'
+
+" hover
+let g:ycm_auto_hover = ''
+
+" key maps
+nmap gh <plug>(YCMHover)
+noremap gc :exec "YcmForceCompileAndDiagnostics"<cr>
+noremap gd :exec "YcmDiags"<cr>
+noremap gt :exec "YcmCompleter GetType"<cr>
+noremap gp :exec "YcmCompleter GetParent"<cr>
+noremap gf :exec "YcmCompleter FixIt"<cr>
 " }}}
 
 " gutentags
 " {{{
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+" let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+let g:gutentags_project_root = ['.svn', '.git', '.hg']
+
+" enable gtags module
+let g:gutentags_modules = ['ctags']
 
 " 所生成的数据文件的名称
-let g:gutentags_ctags_tagfile = '.tags'
+let g:gutentags_ctags_tagfile = '.ctags'
 
-" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
-let s:vim_tags = expand('~/.cache/tags')
+" 将自动生成的 tags 文件全部放入 ~/.cache/ctags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/gutentags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 配置 ctags 的参数
@@ -353,21 +333,46 @@ let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 if !isdirectory(s:vim_tags)
    silent! call mkdir(s:vim_tags, 'p')
 endif
+
+let g:gutentags_project_root_finder = "GutentagsCustomRoot"
+function! GutentagsCustomRoot(filepath)
+    " 检查leaderf生成的gtags，有才生成对应的ctags
+    let s = "def _gutentags_custom_root(filepath):\n"
+    let s = s."  import os\n"."  import os.path\n"."  import re\n"
+    let s = s."  lf_db_location = r'/Users/guoang/.cache/leaderf/.LfCache/gtags'\n"
+    let s = s."  if os.name == 'nt':\n"
+    let s = s."    path_name = re.sub(r'[\\/]', '_', os.path.dirname(filepath).replace(r':\', '_', 1))\n"
+    let s = s."  else:\n"
+    let s = s."    path_name = os.path.dirname(filepath).replace('/', '_')\n"
+    let s = s."  if os.path.exists(lf_db_location):\n"
+    let s = s."    for path, dir_list, file_list in os.walk(lf_db_location):\n"
+    let s = s."      dir_list.sort(key=lambda i: -len(i))\n"
+    let s = s."      for d in dir_list:\n"
+    let s = s."        if path_name.startswith(d):\n"
+    let s = s."          with open(os.path.join(lf_db_location, d, 'GROOT'), 'r') as f:\n"
+    let s = s."            root = f.read()\n"
+    let s = s."            print(root)\n"
+    let s = s."          return\n"
+    execute("py3 ".s)
+    let s = "_gutentags_custom_root('".a:filepath."')"
+    let ret = execute("py3 ".s)
+    return ret[1:]
+endfunction
 " }}}
 
 " ctrlsf
 " {{{
-let g:ctrlsf_ackprg='ag'
-let g:ctrlsf_default_root = 'project+fw'
-let g:ctrlsf_mapping = {
-    \ "split": "",
-    \ "vsplit": "<c-o>",
-    \ }
-let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags', 'build']
-let g:ctrlsf_extra_root_markers = ['.root']
-let g:ctrlsf_auto_focus = {
-    \ "at": "start"
-    \ }
+" let g:ctrlsf_ackprg='ag'
+" let g:ctrlsf_default_root = 'project+fw'
+" let g:ctrlsf_mapping = {
+"     \ "split": "",
+"     \ "vsplit": "<c-o>",
+"     \ }
+" let g:ctrlsf_ignore_dir = ['.svn', '.git', 'tags', 'build']
+" let g:ctrlsf_extra_root_markers = ['.root']
+" let g:ctrlsf_auto_focus = {
+"     \ "at": "start"
+"     \ }
 " }}}
 
 " nerdcommenter
@@ -513,9 +518,9 @@ let g:vim_markdown_new_list_item_indent = 0
 
 " gundo
 " {{{
-nnoremap U :GundoToggle<CR>
-let g:gundo_preview_bottom = 1
-let g:gundo_close_on_revert = 1
+" nnoremap U :GundoToggle<CR>
+" let g:gundo_preview_bottom = 1
+" let g:gundo_close_on_revert = 1
 " }}}
 
 " smartim
@@ -607,15 +612,17 @@ function! RunMarkdown()
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/dist/sample.md')
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/node_modules/markdown-core/dist/sample.md')
     "
-    call job_start('open http://guoang.me/md\?name\=' . expand('%:t'))
+    let cmd = '!open http://guoang.me/md\?name\=' . shellescape(expand('%:t'))
+    call job_start(cmd)
 endfunction
 
 function! UploadMarkdown()
     if &ft  != 'markdown'
         return
     endif
-    call job_start('scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' http@vultr:~/www/md/')
-    " exe 'AsyncRun -post=exe\ "cclose" ' . 'scp -i ~/.ssh/nopasswd ' . expand('%:p') . ' root@vultr:~/http_root/md/'
+    let cmd = 'scp -i ~/.ssh/id_rsa ' . shellescape(expand('%:p')) . ' http@vultr:~/www/md/'
+    call job_start(cmd)
+    " exe 'AsyncRun -post=exe\ "cclose" ' . cmd
 endfunction
 " auto upload markdown
 auto BufWritePost *.markdown,*.md call UploadMarkdown()
@@ -704,33 +711,90 @@ nnoremap <leader>l :call ToggleLocationList()<cr>
 
 " echodoc
 " {{{
-set noshowmode
-let g:echodoc#enable_at_startup = 1
-let g:echodoc#enable_force_overwrite = 1
-let g:echodoc#type = "float"
+" set noshowmode
+" let g:echodoc#enable_at_startup = 1
+" let g:echodoc#enable_force_overwrite = 1
+" let g:echodoc#type = "float"
 " }}}
 
 " leaderf
 " {{{
-let g:Lf_ShortcutF = '<c-p>'
-noremap <c-y> :LeaderfBufTag<cr>
-let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+noremap <c-o> :Leaderf file<cr>
+noremap <c-y> :Leaderf bufTag<cr>
+noremap <c-e> :<c-u><c-r>=printf("Leaderf rg --regexMode -e %s", expand("<cword>"))<cr>
+noremap gr :<C-U><C-R>=printf("Leaderf gtags --auto-jump -r %s", expand("<cword>"))<CR><CR>
+" noremap gn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+" noremap gp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+let g:Lf_RootMarkers = ['.root', '.svn', '.git']
+let g:Lf_Gtagslabel = 'native-pygments'
+let g:Lf_Gtagsconf = '/usr/local/share/gtags/gtags.conf'
+let g:Lf_GtagsAutoGenerate = 0  "1 will slowdown startup time
 let g:Lf_WorkingDirectoryMode = 'Aa'
 let g:Lf_WindowHeight = 0.30
 let g:Lf_CacheDirectory = expand('~/.cache/leaderf')
+let g:Lf_UseCache = 1
 let g:Lf_ShowRelativePath = 0
 let g:Lf_HideHelp = 1
 let g:Lf_ShowHidden = 1
 let g:Lf_FollowLinks = 1
-let g:Lf_StlColorscheme = 'powerline'
-let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+let g:Lf_StlColorscheme = 'default'
 let g:Lf_UseVersionControlTool = 0
-let Lf_DefaultExternalTool = 'ag'
+let g:Lf_DefaultExternalTool = 'rg'
 let g:Lf_WildIgnore = {
-    \ 'dir': ['.git', '.svn', '.hg'],
+    \ 'dir': ['.git', '.svn', '.hg', 'build'],
     \ 'file': ['*.sw?','~$*','*.exe','*.so','*.dylib','*.o','*.py[co]','*.a']
     \}
+let g:Lf_WindowPosition = 'bottom'
+let g:Lf_PopupWidth = 0.8
+let g:Lf_PopupHeight = 0
+let g:Lf_PopupPosition = [20, 0]
+let g:Lf_PopupPreviewPosition = 'top'
+let g:Lf_PopupColorscheme = 'default'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_PreviewHorizontalPosition = 'center'
+let g:Lf_PreviewPopupWidth = 0
+let g:Lf_AutoResize = 1
+let g:Lf_PreviewCode = 1
+let g:Lf_PreviewResult = { 'rg': 0, 'gtags': 0 }
 autocmd BufEnter * setlocal bufhidden=unload
+" }}}
+
+" 跳转
+" {{{
+function! GoYcm()
+    exec "YcmCompleter GoTo"
+endfunction
+
+function! GoTags()
+    " slow if tags file is very large
+    if tagfiles() == []
+        return
+    endif
+    exec 'tjump '.expand('<cword>')
+endfunction
+
+function! GoGTags()
+    exec printf("Leaderf gtags --auto-jump -d %s", expand("<cword>"))
+endfunction
+
+function! SmartGoTo()
+    call jumpstack#Mark()
+    let old_file = expand('%:p')
+    let old_pos = getpos('.')
+    if old_file == expand('%:p') && old_pos == getpos('.')
+        call GoYcm()
+    endif
+    if old_file == expand('%:p') && old_pos == getpos('.')
+        call GoGTags()
+    endif
+    if old_file != expand('%:p')
+        " 删掉OnBufRead标记的位置
+        call jumpstack#Pop()
+    endif
+    call jumpstack#Mark()
+endfunction
+
+noremap gd :call SmartGoTo()<cr>
 " }}}
 
 " ale
@@ -792,14 +856,14 @@ endfunction
 " jumpstack
 " {{{
 nnoremap <c-n> :call jumpstack#JumpNext()<cr>
-nnoremap <c-o> :call jumpstack#JumpPrevious()<cr>
-autocmd BufReadPre * call jumpstack#Mark()
+nnoremap <c-p> :call jumpstack#JumpPrevious()<cr>
+autocmd BufLeave * call jumpstack#Mark()
 autocmd BufReadPost * call jumpstack#Mark()
 " }}}
 
 " dash
 " {{{
-nmap <c-d> :Dash
+nmap <c-d> :<c-u><c-r>=printf("Dash %s", expand("<cword>"))<cr><cr>
 let g:dash_map = {
     \ 'c' : ['c', 'c++'],
     \ 'cpp': ['c', 'c++'],
@@ -816,18 +880,7 @@ let g:dash_map = {
 
 " pangu
 " {{{
-autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
-" }}}
-
-" go
-" {{{
-autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-g>g :GoDef<CR> | endif
-autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-g><c-g> :GoDef<CR> | endif
-autocmd FileType * if expand('<amatch>') == 'go' | nnoremap <c-o> :GoDefPop<CR> | endif
-autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g>g :call SmartGoTo()<cr> | endif
-autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-g><c-g> :call SmartGoTo()<cr> | endif
-autocmd FileType * if expand('<amatch>') != 'go' | nnoremap <c-o> :call jumpstack#JumpPrevious()<cr> | endif
-
+" autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki,*.cnx call PanGuSpacing()
 " }}}
 
 "easymotion
@@ -851,5 +904,32 @@ map fh <Plug>(easymotion-linebackward)
 
 " tagbar
 " {{{
-nmap <F8> :TagbarToggle<CR>
+" nmap <F8> :TagbarToggle<CR>
+" }}}
+
+" rainbow
+" {{{
+" let g:rainbow_active = 0
+" let g:rainbow_conf = {
+" \	'guifgs': ['white', 'yellow', 'cyan', 'magenta'],
+" \	'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+" \	'operators': '_,_',
+" \	'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+" \	'separately': {
+" \		'*': {},
+" \		'tex': {
+" \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+" \		},
+" \		'lisp': {
+" \			'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+" \		},
+" \		'vim': {
+" \			'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+" \		},
+" \		'html': {
+" \			'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+" \		},
+" \		'css': 0,
+" \	}
+" \}
 " }}}
