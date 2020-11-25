@@ -144,9 +144,7 @@ endif
 set completeopt=longest,menu
 " switchbuf
 set switchbuf=vsplit
-
 " set mouse=a
-
 syntax on
 
 " 配色
@@ -154,31 +152,28 @@ syntax on
 " colo molokai
 
 " onedark
-" {{{
-"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
-"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
-"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
-if (empty($TMUX))
-  if (has("nvim"))
-    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-  if (has("termguicolors"))
-    set termguicolors
-  endif
+if (has("termguicolors"))
+  set termguicolors
 endif
-" }}}
 colo onedark
 nnoremap zff zf%
 " 窗口缩放
-nnoremap <c-h> :vertical resize -3<cr>
-nnoremap <c-l> :vertical resize +3<cr>
-" tab
-nnoremap <tab> <c-w>w
-nnoremap <s-tab> <c-w>W
+nnoremap <c-left> <c-w><
+nnoremap <c-right> <c-w>>
+nnoremap <c-up> <c-w>+
+nnoremap <c-down> <c-w>-
+" move between windows
+noremap <tab> <c-w>w
+noremap <c-j> <c-w>j
+noremap <c-k> <c-w>k
+noremap <c-h> <c-w>h
+noremap <c-l> <c-w>l
+" buffer
+nnoremap gbn :bn<cr>
+nnoremap gbp :bp<cr>
+" tabs
+nnoremap tn :tabnext<cr>
+nnoremap tp :tabprev<cr>
 " location list
 " nnoremap gn :lne<CR>
 " nnoremap gp :lp<CR>
@@ -215,9 +210,6 @@ language message zh_CN.utf-8
 au BufRead,BufNewFile *.spzs set filetype=spzs
 au BufRead,BufNewFile *.{fx,nfx,tml,fxl} set filetype=hlsl
 au BufRead,BufNewFile *.{vs,ps,fs} set filetype=glsl
-" exc to quit quickfix/locationlist
-au FileType qf nnoremap <buffer><silent> <esc> :quit<cr>
-au FileType qf nnoremap <buffer><silent> q :quit<cr>
 
 " 粘贴时不拷贝
 vnoremap p "_dP
@@ -589,7 +581,7 @@ function! RunCpp()
     endif
     let filename = expand('%:p')
     let prefix = join(split(filename, '\.')[:-2], '.')
-    let compile = 'c++ '.filename.' -g -std=c++17 -I/usr/local/include/ -L/usr/local/lib -lboost_system -o '.prefix
+    let compile = 'c++ '.filename.' -g -std=gnu++2a -I/usr/local/include/ -L/usr/local/lib -lboost_system -o '.prefix
     exe 'AsyncRun -raw -cwd=%:p:h '.compile.';'.prefix.';rm '.prefix
 endfunction
 
@@ -612,7 +604,7 @@ function! RunMarkdown()
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/dist/sample.md')
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/node_modules/markdown-core/dist/sample.md')
     "
-    let cmd = '!open http://guoang.me/md\?name\=' . shellescape(expand('%:t'))
+    let cmd = 'open http://guoang.me/md\?name\=' . expand('%:t')
     call job_start(cmd)
 endfunction
 
@@ -620,7 +612,7 @@ function! UploadMarkdown()
     if &ft  != 'markdown'
         return
     endif
-    let cmd = 'scp -i ~/.ssh/id_rsa ' . shellescape(expand('%:p')) . ' http@vultr:~/www/md/'
+    let cmd = 'scp -i ~/.ssh/id_rsa ' . expand('%:p') . ' http@vultr:~/www/md/'
     call job_start(cmd)
     " exe 'AsyncRun -post=exe\ "cclose" ' . cmd
 endfunction
@@ -721,6 +713,7 @@ nnoremap <leader>l :call ToggleLocationList()<cr>
 " {{{
 noremap <c-o> :Leaderf file<cr>
 noremap <c-y> :Leaderf bufTag<cr>
+noremap <c-u> :Leaderf buffer<cr>
 noremap <c-e> :<c-u><c-r>=printf("Leaderf rg --regexMode -e %s", expand("<cword>"))<cr>
 noremap gr :<C-U><C-R>=printf("Leaderf gtags --auto-jump -r %s", expand("<cword>"))<CR><CR>
 " noremap gn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
