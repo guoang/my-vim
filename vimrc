@@ -16,6 +16,19 @@ function! UploadG78()
     endif
 endfunction
 auto BufWritePost *.markdown,*.md,*.py,*.cpp,*.cc,*.c,*.h,*.hpp call UploadG78()
+
+function! UploadOpenServer()
+    if &ft != 'python' && &ft != 'markdown' && &ft != 'cpp' && &ft != 'c' && &ft != 'cmake'
+        return
+    endif
+    let opsv_root = '/Users/guoang/work/openserver/'
+    let abs_path = expand('%:p')
+    if abs_path =~ opsv_root
+        let rel_path = split(abs_path, opsv_root)[0]
+        call job_start('scp -P 32200 ' . expand('%:p') . ' gzguoang@dev:~/openserver/'.rel_path)
+    endif
+endfunction
+auto BufWritePost *.markdown,*.md,*.py,*.cpp,*.cc,*.c,*.h,*.hpp,*.txt,*.cmake call UploadOpenServer()
 " }}}
 
 " Plug settings
@@ -49,12 +62,13 @@ Plug 'danro/rename.vim'
 Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-unimpaired'
 Plug 'ludovicchabant/vim-gutentags'
 " Plug 'dyng/ctrlsf.vim', {'on': ['<Plug>CtrlSFPrompt', '<Plug>CtrlSFVwordExec']}
 Plug 'guoang/LeaderF', {'do': './install.sh'}
 " language support
 " Plug 'Shougo/echodoc.vim'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'rizzatti/dash.vim'
 " C/C++
 Plug 'ycm-core/YouCompleteMe', {'do': './install.py --clang-completer'}
@@ -142,8 +156,11 @@ endif
 " 打开预览窗口会导致下拉菜单抖动，因此我一般都去掉预览窗口的显示
 " :help completeopt
 set completeopt=longest,menu
-" switchbuf
-set switchbuf=vsplit
+
+" fugitive mapped <CR> globally
+" In the quickfix window, <CR> is used to jump to the error under the
+" cursor, so undefine the mapping there.
+autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 " set mouse=a
 syntax on
 
@@ -182,6 +199,11 @@ nnoremap <f1> <esc>
 inoremap <f1> <esc>
 vnoremap <f1> <esc>
 cnoremap <f1> <esc>
+" hightlight bug do not jump
+nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
+nnoremap <silent> # :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
+nnoremap <silent> g* :let @/=expand('<cword>') <bar> set hls <cr>
+nnoremap <silent> g# :let @/=expand('<cword>') <bar> set hls <cr>
 " motion
 inoremap <c-a> <home>
 inoremap <c-e> <end>
@@ -306,7 +328,7 @@ noremap gf :exec "YcmCompleter FixIt"<cr>
 " let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 let g:gutentags_project_root = ['.svn', '.git', '.hg']
 
-" enable gtags module
+" enable module
 let g:gutentags_modules = ['ctags']
 
 " 所生成的数据文件的名称
@@ -604,7 +626,15 @@ function! RunMarkdown()
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/dist/sample.md')
     " call system('cp ' . expand('%:p') . ' ~/git/markdown-plus/node_modules/markdown-core/dist/sample.md')
     "
-    let cmd = 'open http://guoang.me/md\?name\=' . expand('%:t')
+    let cmd = 'open https://guoang.tech/md\?name\=' . expand('%:t')
+    call job_start(cmd)
+endfunction
+
+function! RunSlide()
+    if &ft  != 'html'
+        return
+    endif
+    let cmd = 'open https://guoang.tech/slide/' . expand('%:t')
     call job_start(cmd)
 endfunction
 
@@ -612,12 +642,23 @@ function! UploadMarkdown()
     if &ft  != 'markdown'
         return
     endif
-    let cmd = 'scp -i ~/.ssh/id_rsa ' . expand('%:p') . ' http@vultr:~/www/md/'
+    let cmd = 'scp ' . expand('%:p') . ' guoang@guoang.tech:~/www/md'
     call job_start(cmd)
     " exe 'AsyncRun -post=exe\ "cclose" ' . cmd
 endfunction
-" auto upload markdown
+
+function! UploadSlide()
+    if &ft  != 'html'
+        return
+    endif
+    let cmd = 'scp ' . expand('%:p') . ' guoang@guoang.tech:~/www/slide'
+    call job_start(cmd)
+    " exe 'AsyncRun -post=exe\ "cclose" ' . cmd
+endfunction
+
+" auto upload
 auto BufWritePost *.markdown,*.md call UploadMarkdown()
+auto BufWritePost *.html call UploadSlide()
 
 function! RunPhp()
     if &ft  != 'php'
@@ -642,6 +683,7 @@ function! QuickRun()
     call RunPython()
     call RunDot()
     call RunMarkdown()
+    call RunSlide()
     call RunPhp()
     call RunGo()
 endfunction
@@ -787,7 +829,20 @@ function! SmartGoTo()
     call jumpstack#Mark()
 endfunction
 
+function! SmartGoTags()
+    call jumpstack#Mark()
+    let old_file = expand('%:p')
+    let old_pos = getpos('.')
+    call GoTags()
+    if old_file != expand('%:p')
+        " 删掉OnBufRead标记的位置
+        call jumpstack#Pop()
+    endif
+    call jumpstack#Mark()
+endfunction
+
 noremap gd :call SmartGoTo()<cr>
+noremap g] :call SmartGoTags()<cr>
 " }}}
 
 " ale
@@ -805,7 +860,7 @@ let g:ale_set_balloons = 0
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
     \ 'markdown': ['alex'],
-    \ 'python': ['flake8'],
+    \ 'python': ['flake8', 'pylint'],
     \ 'cpp': ['cpplint'],
     \ 'c': ['cpplint']
     \}
@@ -850,8 +905,9 @@ endfunction
 " {{{
 nnoremap <c-n> :call jumpstack#JumpNext()<cr>
 nnoremap <c-p> :call jumpstack#JumpPrevious()<cr>
+nnoremap <c-m> :call jumpstack#Mark()<cr>
 autocmd BufLeave * call jumpstack#Mark()
-autocmd BufReadPost * call jumpstack#Mark()
+autocmd BufEnter * call jumpstack#Mark()
 " }}}
 
 " dash
