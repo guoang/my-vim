@@ -73,7 +73,7 @@ Plug 'guoang/LeaderF', {'do': './install.sh'}
 Plug 'dense-analysis/ale'
 Plug 'rizzatti/dash.vim'
 " C/C++
-Plug 'ycm-core/YouCompleteMe', {'do': './install.py --clang-completer'}
+Plug 'ycm-core/YouCompleteMe', {'do': './install.py --clangd-completer'}
 Plug 'rhysd/vim-clang-format', {'for': ['c', 'cpp']}
 Plug 'micbou/a.vim'
 " Plug 'majutsushi/tagbar'  " too slow!!
@@ -198,7 +198,7 @@ nnoremap <f1> <esc>
 inoremap <f1> <esc>
 vnoremap <f1> <esc>
 cnoremap <f1> <esc>
-" hightlight bug do not jump
+" hightlight but do not jump
 nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 nnoremap <silent> # :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
 nnoremap <silent> g* :let @/=expand('<cword>') <bar> set hls <cr>
@@ -316,7 +316,7 @@ let g:ycm_auto_hover = ''
 " key maps
 nmap gh <plug>(YCMHover)
 noremap gc :exec "YcmForceCompileAndDiagnostics"<cr>
-noremap gd :exec "YcmDiags"<cr>
+noremap ge :exec "YcmDiags"<cr>
 noremap gt :exec "YcmCompleter GetType"<cr>
 noremap gp :exec "YcmCompleter GetParent"<cr>
 noremap gf :exec "YcmCompleter FixIt"<cr>
@@ -325,8 +325,7 @@ noremap gf :exec "YcmCompleter FixIt"<cr>
 " gutentags
 " {{{
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-" let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
-let g:gutentags_project_root = ['.svn', '.git', '.hg']
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 
 " enable module
 let g:gutentags_modules = ['ctags']
@@ -335,7 +334,7 @@ let g:gutentags_modules = ['ctags']
 let g:gutentags_ctags_tagfile = '.ctags'
 
 " 将自动生成的 tags 文件全部放入 ~/.cache/ctags 目录中，避免污染工程目录
-let s:vim_tags = expand('~/.cache/gutentags')
+let s:vim_tags = expand('~/.cache/ctags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 配置 ctags 的参数
@@ -687,7 +686,7 @@ function! QuickRun()
     call RunPhp()
     call RunGo()
 endfunction
-nnoremap <leader>r :call QuickRun()<cr>
+" nnoremap <leader>r :call QuickRun()<cr>
 
 " force stop
 au FileType qf nnoremap <buffer><silent> <c-c> :AsyncStop!<cr>
@@ -812,21 +811,40 @@ function! GoGTags()
     exec printf("Leaderf gtags --auto-jump -d %s", expand("<cword>"))
 endfunction
 
-function! SmartGoTo()
+function! SmartGoYcm()
     call jumpstack#Mark()
     let old_file = expand('%:p')
     let old_pos = getpos('.')
-    if old_file == expand('%:p') && old_pos == getpos('.')
-        call GoYcm()
-    endif
-    if old_file == expand('%:p') && old_pos == getpos('.')
-        call GoGTags()
-    endif
-    if old_file != expand('%:p')
-        " 删掉OnBufRead标记的位置
+    call GoYcm()
+    if old_pos == getpos('.') && old_file == expand('%:p')
+        " 没跳转，则删掉一开始标记的位置
         call jumpstack#Pop()
+    elseif old_file != expand('%:p')
+        " 换页了，删掉OnBufRead标记的位置
+        call jumpstack#Pop()
+        call jumpstack#Mark()
+    else
+        " 没换页
+        call jumpstack#Mark()
     endif
+endfunction
+
+function! SmartGoGTags()
     call jumpstack#Mark()
+    let old_file = expand('%:p')
+    let old_pos = getpos('.')
+    call GoGTags()
+    if old_pos == getpos('.') && old_file == expand('%:p')
+        " 没跳转，则删掉一开始标记的位置
+        call jumpstack#Pop()
+    elseif old_file != expand('%:p')
+        " 换页了，删掉OnBufRead标记的位置
+        call jumpstack#Pop()
+        call jumpstack#Mark()
+    else
+        " 没换页
+        call jumpstack#Mark()
+    endif
 endfunction
 
 function! SmartGoTags()
@@ -834,14 +852,21 @@ function! SmartGoTags()
     let old_file = expand('%:p')
     let old_pos = getpos('.')
     call GoTags()
-    if old_file != expand('%:p')
-        " 删掉OnBufRead标记的位置
+    if old_pos == getpos('.') && old_file == expand('%:p')
+        " 没跳转，则删掉一开始标记的位置
         call jumpstack#Pop()
+    elseif old_file != expand('%:p')
+        " 换页了，删掉OnBufRead标记的位置
+        call jumpstack#Pop()
+        call jumpstack#Mark()
+    else
+        " 没换页
+        call jumpstack#Mark()
     endif
-    call jumpstack#Mark()
 endfunction
 
-noremap gd :call SmartGoTo()<cr>
+noremap gd :call SmartGoYcm()<cr>
+noremap gG :call SmartGoGTags()<cr>
 noremap g] :call SmartGoTags()<cr>
 " }}}
 
