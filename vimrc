@@ -40,6 +40,8 @@ Plug 'guoang/vim-airline-themes'
 Plug 'guoang/vim-polyglot', {'for': []}
 " Plug 'tomasr/molokai'
 Plug 'joshdick/onedark.vim'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+Plug 'rafi/awesome-vim-colorschemes'
 " Plug 'luochen1990/rainbow'    # 括号着色
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -165,14 +167,11 @@ autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 syntax on
 
 " 配色
-" let g:rehash256 = 1
-" colo molokai
-
-" onedark
-if (has("termguicolors"))
-  set termguicolors
-endif
-colo onedark
+" if (has("termguicolors"))
+"   set termguicolors
+" endif
+colo sonokai
+hi Normal guibg=NONE ctermbg=NONE
 nnoremap zff zf%
 " 窗口缩放
 nnoremap <c-left> <c-w><
@@ -254,7 +253,8 @@ let NERDTreeIgnore=['\.pyc', '\.pyo', '\~$', '\.swp']
 " {{{
 set laststatus=2
 " let g:airline_theme = "jellybeans"
-let g:airline_theme = "onedark"
+" let g:airline_theme = "onedark"
+let g:airline_theme = "sonokai"
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
@@ -593,7 +593,7 @@ function! RunPython()
     if has("win32")
         exe 'AsyncRun -raw -cwd=%:p:h python.exe %:p'
     else
-        exe 'AsyncRun -raw -cwd=%:p:h python %:p'
+        exe 'AsyncRun -raw -cwd=%:p:h python3 %:p'
     endif
 endfunction
 
